@@ -367,7 +367,14 @@
     "thu": "Qui",
     "fri": "Sex",
     "sat": "Sáb",
-    "sun": "Dom"
+    "sun": "Dom",
+    "presets": {
+      "today": "Hoje",
+      "last_7_days": "Últimos 7 dias",
+      "last_30_days": "Últimos 30 dias",
+      "this_month": "Este mês",
+      "last_month": "Mês passado"
+    }
   },
   "nodes": {
     "add": "Adicionar servidor",

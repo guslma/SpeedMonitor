@@ -367,7 +367,14 @@
     "thu": "Thu",
     "fri": "Fri",
     "sat": "Sat",
-    "sun": "Sun"
+    "sun": "Sun",
+    "presets": {
+      "today": "Today",
+      "last_7_days": "Last 7 days",
+      "last_30_days": "Last 30 days",
+      "this_month": "This month",
+      "last_month": "Last month"
+    }
   },
   "nodes": {
     "add": "Add server",

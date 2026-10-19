@@ -29,6 +29,7 @@ import Tooltip from "@/common/components/Tooltip";
 import DateRangePicker from "@/common/components/DateRangePicker";
 import ExportButton from "@/common/components/ExportButton";
 import { StatisticsRangeContext } from "@/common/contexts/StatisticsRange";
+import { RANGE_PRESETS } from "@/common/contexts/StatisticsRange/StatisticsRangeContext";
 import { formatDateParam } from "@/common/utils/ConnectionUtil";
 
 const HeaderComponent = () => {
@@ -160,7 +161,9 @@ const HeaderComponent = () => {
 
                     {location.pathname === "/statistics" && <>
                         <DateRangePicker from={dateRange.from} to={dateRange.to} compact
-                                         onChange={(from, to) => setDateRange({from, to})} />
+                                         onChange={(from, to) => setDateRange({from, to})}
+                                         presets={RANGE_PRESETS} activePreset={dateRange.preset}
+                                         onPreset={(preset) => setDateRange({preset})} />
                         <ExportButton dateRange={dateRange} compact />
                         <Tooltip content={t("connection.report")} position="bottom">
                             <FontAwesomeIcon icon={faFileLines} className="header-icon report-icon"

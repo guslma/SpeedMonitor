@@ -5,7 +5,7 @@ import { t } from "i18next";
 import Tooltip from "@/common/components/Tooltip";
 import "./styles.sass";
 
-export const DateRangePicker = ({ from, to, onChange, minDate, maxDate, compact = false }) => {
+export const DateRangePicker = ({ from, to, onChange, minDate, maxDate, compact = false, presets = [], activePreset = null, onPreset }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selecting, setSelecting] = useState("from");
     const [tempFrom, setTempFrom] = useState(from);
@@ -212,6 +212,21 @@ export const DateRangePicker = ({ from, to, onChange, minDate, maxDate, compact 
 
             {isOpen && (
                 <div className="date-range-popover" ref={popoverRef}>
+                    {presets.length > 0 && (
+                        <div className="date-range-presets">
+                            {presets.map((preset) => (
+                                <button key={preset} type="button"
+                                        className={"date-range-preset" + (preset === activePreset ? " active" : "")}
+                                        onClick={() => {
+                                            onPreset(preset);
+                                            setSelecting("from");
+                                            setIsOpen(false);
+                                        }}>
+                                    {t(`calendar.presets.${preset}`)}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                     <div className="calendar-nav">
                         <button className="nav-btn" onClick={prevMonth}>
                             <FontAwesomeIcon icon={faChevronLeft} />

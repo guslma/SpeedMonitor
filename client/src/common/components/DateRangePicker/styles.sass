@@ -211,3 +211,32 @@
 
   .date-range-text
     font-size: 0.8rem
+
+// Shortcuts above the calendar
+.date-range-presets
+  display: flex
+  flex-wrap: wrap
+  gap: 0.4rem
+  padding-bottom: 0.75rem
+  margin-bottom: 0.75rem
+  border-bottom: 1px solid $light-gray
+  max-width: 19rem
+
+.date-range-preset
+  font: inherit
+  font-size: 0.82rem
+  padding: 0.35rem 0.7rem
+  border-radius: 999px
+  border: 1px solid $light-gray
+  background: $darker-gray
+  color: $white
+  cursor: pointer
+  white-space: nowrap
+
+  &:hover
+    border-color: $accent-primary
+
+  &.active
+    background: $accent-primary
+    border-color: $accent-primary
+    color: #fff
