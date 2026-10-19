@@ -49,27 +49,70 @@ Em **Gerar relatório**, o período escolhido vira uma página pronta para impri
 
 <img src="docs/screenshots/celular.png" alt="SpeedMonitor no celular" width="320">
 
-## Como rodar
+## Como instalar
 
-Com Docker:
+Funciona em qualquer máquina Linux que fique ligada, como um mini PC, um Raspberry Pi ou um servidor caseiro, e dá para fazer tudo pelo terminal.
+
+**1. Instale o Docker** (pule se já tiver):
 
 ```bash
-docker build -t speedmonitor .
-docker run -d --name speedmonitor \
+curl -fsSL https://get.docker.com | sudo sh
+```
+
+**2. Baixe o código e gere a imagem:**
+
+```bash
+git clone https://github.com/guslma/SpeedMonitor.git
+cd SpeedMonitor
+sudo docker build -t speedmonitor .
+```
+
+Sem `git`, baixe o código assim:
+
+```bash
+curl -L https://github.com/guslma/SpeedMonitor/archive/refs/heads/main.tar.gz | tar xz
+cd SpeedMonitor-main
+```
+
+Gerar a imagem leva alguns minutos e baixa algumas centenas de MB. Num Raspberry Pi, demora mais.
+
+**3. Inicie o SpeedMonitor:**
+
+```bash
+sudo docker run -d --name speedmonitor \
   -p 5216:5216 \
   -e TZ=America/Sao_Paulo \
-  -v /caminho/para/os/dados:/app/data \
+  -v ~/speedmonitor-data:/app/data \
   --restart unless-stopped \
   speedmonitor
 ```
 
-Depois, abra `http://IP-DO-SERVIDOR:5216`. Os dados (banco e configurações) ficam na pasta mapeada em `/app/data`, então dá para recriar o contêiner sem perder o histórico. Ajuste o `TZ` para o seu fuso, para que os horários dos avisos saiam certos.
+- `TZ` é o fuso horário, usado nos horários dos avisos e do relatório.
+- `~/speedmonitor-data` é onde ficam o banco e as configurações, então dá para recriar o contêiner sem perder o histórico.
+- `--restart unless-stopped` faz ele voltar sozinho depois que a máquina reinicia.
+
+**4. Abra no navegador:** `http://IP-DA-MÁQUINA:5216`, de qualquer aparelho da mesma rede. Para descobrir o IP, rode `hostname -I` na máquina. Na primeira vez, um assistente pede para escolher o servidor de testes.
+
+### Atualizar
+
+```bash
+cd SpeedMonitor
+git pull
+sudo docker build -t speedmonitor .
+sudo docker rm -f speedmonitor
+```
+
+Depois, rode de novo o comando do passo 3. O histórico continua em `~/speedmonitor-data`.
+
+### Acessar de fora de casa
+
+A página só abre na rede local. Para ver de outro lugar, o jeito mais simples é instalar o [Tailscale](https://tailscale.com) na máquina e no seu celular ou computador. Não precisa abrir portas no roteador.
 
 ## Primeiros ajustes
 
-1. **Plano e conexão** (em Configurações): informe o download e o upload contratados e o endereço do roteador, por exemplo `192.168.1.1`.
+1. **Plano e conexão** (em Configurações): informe o download e o upload contratados e o endereço do roteador, por exemplo `192.168.1.1`. Para descobrir o endereço do roteador, rode `ip route | grep default` na máquina.
 2. **Integrações** (em Configurações): escolha onde receber os avisos e ligue "Avisar quando a internet cair". O jeito mais simples é o [ntfy](https://ntfy.sh): instale o app no celular, escolha um tópico e use `https://ntfy.sh` como servidor.
-3. **Definir frequência**: com o registro de quedas ligado, dá para espaçar os testes completos (por exemplo, a cada 2 horas) e gastar menos internet sem perder as quedas.
+3. **Definir frequência**: cada teste completo gasta algumas centenas de MB. Como as quedas são registradas à parte, dá para espaçar os testes (por exemplo, a cada 2 horas) e gastar menos internet sem perder nenhuma queda. Isso vale a pena principalmente em internet com franquia.
 
 ## Licença
 
