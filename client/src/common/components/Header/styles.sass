@@ -135,3 +135,7 @@ header
   .demo-info
     font-size: 12pt
     padding: 0
+// On phones the settings menu has the same option, so the header keeps room for the name
+@media screen and (max-width: 600px)
+  .tooltip-wrapper:has(> .customize-icon)
+    display: none

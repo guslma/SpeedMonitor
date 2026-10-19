@@ -1,6 +1,7 @@
 import "./styles.sass";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faTableCellsLarge,
     faCircleArrowUp, faDownload,
     faGaugeHigh,
     faGear,
@@ -159,6 +160,10 @@ const HeaderComponent = () => {
                         <DateRangePicker from={dateRange.from} to={dateRange.to} compact
                                          onChange={(from, to) => setDateRange({from, to})} />
                         <ExportButton dateRange={dateRange} compact />
+                        {!config.viewMode && <Tooltip content={t("dashboard.customize")} position="bottom">
+                            <FontAwesomeIcon icon={faTableCellsLarge} className="header-icon customize-icon"
+                                             onClick={() => window.dispatchEvent(new Event("speedmonitor:customize"))}/>
+                        </Tooltip>}
                     </>}
 
                     <Tooltip content={t("dropdown.settings")} position="bottom">

@@ -19,6 +19,7 @@ O SpeedMonitor roda testes de velocidade automaticamente (download, upload, ping
 - **Avisos em português** por Telegram, ntfy, Discord, Gotify, Pushover ou webhook: quando a internet volta depois de uma queda, quando a velocidade fica abaixo do plano e ao fim de cada teste
 - **Lista completa dos testes**, seletor de período e exportação em CSV e JSON
 - **Testes agendados** com servidores Ookla, LibreSpeed ou Cloudflare
+- **Painel personalizável**: escolha a ordem, o tamanho e quais cards aparecem nas estatísticas (botão de grade no cabeçalho ou Configurações → Personalizar painel)
 - **Tema claro e escuro**, layout que aproveita telas grandes e se ajusta ao celular
 - **Várias instâncias** num painel só e **métricas para Prometheus e Grafana**
 

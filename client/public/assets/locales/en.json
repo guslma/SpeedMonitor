@@ -687,5 +687,37 @@
       "router": "Router address",
       "router_description": "Optional. With it, SpeedMonitor tells whether an outage came from the provider or from your network."
     }
+  },
+  "dashboard": {
+    "customize": "Customize dashboard",
+    "help": "Drag the cards or use the arrows to change the order. Pick a size and hide what you don't want to see.",
+    "reset": "Restore default",
+    "cancel": "Cancel",
+    "save": "Save",
+    "move_left": "Move back",
+    "move_right": "Move forward",
+    "size": "Size",
+    "visible": "Shown",
+    "hidden": "Hidden",
+    "sizes": {
+      "3": "1/8 of a row",
+      "4": "1/6 of a row",
+      "6": "1/4 of a row",
+      "8": "1/3 of a row",
+      "12": "Half",
+      "24": "Full row"
+    },
+    "cards": {
+      "overview": "Overview",
+      "latest": "Latest test",
+      "consistency": "Connection stability",
+      "connection": "Connection",
+      "avgDownload": "Download values",
+      "avgUpload": "Upload values",
+      "download": "Download chart",
+      "upload": "Upload chart",
+      "ping": "Ping chart",
+      "hourly": "Speed by hour"
+    }
   }
 }

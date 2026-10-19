@@ -25,6 +25,13 @@ import ConsistencyChart from "@/pages/Statistics/charts/ConsistencyChart";
 import ConnectionChart from "@/pages/Statistics/charts/ConnectionChart";
 import {ConnectionDetails} from "@/pages/Statistics/charts/ConnectionChart/ConnectionDetails";
 import PlanDialog from "@/common/components/PlanDialog";
+import DashboardCard from "@/pages/Statistics/components/DashboardCard";
+import {DEFAULT_LAYOUT, isDefaultLayout, moveCard, parseLayout} from "@/pages/Statistics/layout";
+import {ConfigContext} from "@/common/contexts/Config";
+import {ToastNotificationContext} from "@/common/contexts/ToastNotification";
+import {patchRequest} from "@/common/utils/RequestUtil";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheck, faExclamationTriangle, faRotateLeft} from "@fortawesome/free-solid-svg-icons";
 import i18n, {t} from "i18next";
 import "./styles.sass";
 
@@ -83,6 +90,52 @@ export const Statistics = () => {
     const [mountPhase, setMountPhase] = useState(0);
 
     const [dateRange] = useContext(StatisticsRangeContext);
+    const [config, reloadConfig] = useContext(ConfigContext);
+    const updateToast = useContext(ToastNotificationContext);
+    const [editing, setEditing] = useState(false);
+    const [draft, setDraft] = useState(null);
+    const [dragIndex, setDragIndex] = useState(null);
+    const savedLayout = parseLayout(config.dashboardLayout);
+    const layout = editing && draft ? draft : savedLayout;
+
+    // The header button asks to customize the cards
+    useEffect(() => {
+        const start = () => {
+            sessionStorage.removeItem("speedmonitor:customize");
+            setDraft(parseLayout(config.dashboardLayout));
+            setEditing(true);
+        };
+        if (config.dashboardLayout !== undefined && sessionStorage.getItem("speedmonitor:customize")) start();
+        window.addEventListener("speedmonitor:customize", start);
+        return () => window.removeEventListener("speedmonitor:customize", start);
+    }, [config.dashboardLayout]);
+
+    const changeCard = (index, changes) => setDraft((cards) => cards.map((card, i) => i === index ? {...card, ...changes} : card));
+    const move = (from, to) => setDraft((cards) => moveCard(cards, from, to));
+
+    const onDragStart = (event, index) => {
+        setDragIndex(index);
+        event.dataTransfer.effectAllowed = "move";
+    };
+    const onDragOver = (event, index) => {
+        event.preventDefault();
+        if (dragIndex === null || dragIndex === index) return;
+        move(dragIndex, index);
+        setDragIndex(index);
+    };
+
+    const saveLayout = async () => {
+        const value = isDefaultLayout(draft) ? "default" : JSON.stringify(draft);
+        try {
+            const response = await patchRequest("/config/dashboardLayout", {value});
+            if (!response.ok) throw new Error();
+            reloadConfig();
+            setEditing(false);
+            updateToast(t("dropdown.changes_applied"), "green", faCheck);
+        } catch {
+            updateToast(t("dropdown.changes_unsaved"), "red", faExclamationTriangle);
+        }
+    };
 
     const deferredStatistics = useDeferredValue(statistics);
     const isStale = deferredStatistics !== statistics;
@@ -186,21 +239,44 @@ export const Statistics = () => {
         }
     };
 
+    const cards = {
+        overview: <OverviewChart tests={deferredStatistics.tests} time={deferredStatistics.time} dateRange={dateRange} onClick={() => setExpandedChart('overview')}/>,
+        latest: <LatestTestChart test={latestTest} onClick={() => setExpandedChart('latest')}/>,
+        consistency: <ConsistencyChart consistency={deferredStatistics.consistency} onClick={() => setExpandedChart('consistency')}/>,
+        connection: <ConnectionChart summary={connection} onClick={() => setExpandedChart('connection')}/>,
+        download: <SpeedChart labels={deferredStatistics.labels} data={deferredStatistics.data} dataKey="download" titleKey="latest.down" color="hsl(187, 94%, 43%)" failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('download')} compact/>,
+        upload: <SpeedChart labels={deferredStatistics.labels} data={deferredStatistics.data} dataKey="upload" titleKey="latest.up" color="hsl(258, 90%, 66%)" failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('upload')} compact/>,
+        ping: <PingChart labels={deferredStatistics.labels} data={deferredStatistics.data} failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('ping')} compact/>,
+        hourly: <HourlyChart hourlyAverages={deferredStatistics.hourlyAverages} onClick={() => setExpandedChart('hourly')}/>,
+        avgDownload: <AverageChart title={t("statistics.values.down")} data={deferredStatistics.download} onClick={() => setExpandedChart('avgDownload')}/>,
+        avgUpload: <AverageChart title={t("statistics.values.up")} data={deferredStatistics.upload} onClick={() => setExpandedChart('avgUpload')}/>
+    };
+
     return (
-        <div className={`statistic-area${isStale ? ' statistic-stale' : ''}`}>
-            <OverviewChart tests={deferredStatistics.tests} time={deferredStatistics.time} dateRange={dateRange} onClick={() => setExpandedChart('overview')}/>
-            <LatestTestChart test={latestTest} onClick={() => setExpandedChart('latest')}/>
-            <ConsistencyChart consistency={deferredStatistics.consistency} onClick={() => setExpandedChart('consistency')}/>
-            <ConnectionChart summary={connection} onClick={() => setExpandedChart('connection')}/>
+        <div className={`statistic-area dash-area${isStale ? ' statistic-stale' : ''}${editing ? ' dash-area-editing' : ''}`}>
+            {editing && (
+                <div className="dash-toolbar">
+                    <p>{t("dashboard.help")}</p>
+                    <div className="dash-toolbar-actions">
+                        <button className="dialog-btn" onClick={() => setDraft(DEFAULT_LAYOUT.map((card) => ({...card})))}>
+                            <FontAwesomeIcon icon={faRotateLeft}/> <span>{t("dashboard.reset")}</span>
+                        </button>
+                        <button className="dialog-btn" onClick={() => setEditing(false)}>{t("dashboard.cancel")}</button>
+                        <button className="dialog-btn dash-save" onClick={saveLayout}>
+                            <FontAwesomeIcon icon={faCheck}/> <span>{t("dashboard.save")}</span>
+                        </button>
+                    </div>
+                </div>
+            )}
 
-            <SpeedChart labels={deferredStatistics.labels} data={deferredStatistics.data} dataKey="download" titleKey="latest.down" color="hsl(187, 94%, 43%)" failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('download')} compact/>
-            <SpeedChart labels={deferredStatistics.labels} data={deferredStatistics.data} dataKey="upload" titleKey="latest.up" color="hsl(258, 90%, 66%)" failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('upload')} compact/>
-            <PingChart labels={deferredStatistics.labels} data={deferredStatistics.data} failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('ping')} compact/>
-
-            <HourlyChart hourlyAverages={deferredStatistics.hourlyAverages} onClick={() => setExpandedChart('hourly')}/>
-
-            <AverageChart title={t("statistics.values.down")} data={deferredStatistics.download} onClick={() => setExpandedChart('avgDownload')}/>
-            <AverageChart title={t("statistics.values.up")} data={deferredStatistics.upload} onClick={() => setExpandedChart('avgUpload')}/>
+            {layout.map((card, index) => (editing || card.id !== "connection" || connection) && (
+                <DashboardCard key={card.id} card={card} index={index} count={layout.length} editing={editing}
+                               dragging={editing && dragIndex === index} onChange={changeCard} onMove={move}
+                               onDragStart={onDragStart} onDragOver={onDragOver}
+                               onDrop={(event) => event.preventDefault()} onDragEnd={() => setDragIndex(null)}>
+                    {cards[card.id]}
+                </DashboardCard>
+            ))}
 
             <ChartModal 
                 isOpen={!!expandedChart} 

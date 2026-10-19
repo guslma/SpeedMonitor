@@ -29,7 +29,25 @@ const configDefaults = {
     planDownload: "none",
     planUpload: "none",
     router: "none",
-    outageMonitor: "true"
+    outageMonitor: "true",
+    dashboardLayout: "default"
+}
+
+const DASHBOARD_SIZES = [3, 4, 6, 8, 12, 24];
+
+// The statistics page layout: the cards in order, each with a width in 24ths of the row and whether it is shown
+const validateLayout = (value) => {
+    if (value === "default") return value;
+    try {
+        const layout = JSON.parse(value);
+        if (!Array.isArray(layout) || layout.length === 0 || layout.length > 30) return null;
+        const cards = layout.map(({id, size, visible}) => ({id, size, visible}));
+        const valid = cards.every((card) => typeof card.id === "string" && /^[A-Za-z]{1,30}$/.test(card.id)
+            && DASHBOARD_SIZES.includes(card.size) && typeof card.visible === "boolean");
+        return valid ? JSON.stringify(cards) : null;
+    } catch {
+        return null;
+    }
 }
 
 const MAX_RETENTION_DAYS = 10000;
@@ -120,6 +138,11 @@ export const validateInput = async (key, value) => {
 
     if (key === "outageMonitor" && !["true", "false"].includes(value))
         return "You need to provide either true or false";
+
+    if (key === "dashboardLayout") {
+        value = validateLayout(value.toString());
+        if (value === null) return "You need to provide a valid layout";
+    }
 
     if (key === "provider" && !["ookla", "libre", "cloudflare"].includes(value))
         return "You need to provide a valid provider";

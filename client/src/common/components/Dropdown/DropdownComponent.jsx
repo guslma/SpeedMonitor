@@ -12,6 +12,7 @@ import {
     faHardDrive,
     faGauge,
     faFileContract,
+    faTableCellsLarge,
     faUserGear,
     faListUl,
     faChartArea
@@ -76,6 +77,13 @@ const DropdownComponent = ({isOpen, switchDropdown}) => {
         }
     }, [isOpen]);
     
+    // The statistics page starts editing when it opens with this flag, or right away if it is already open
+    const customizeDashboard = () => {
+        sessionStorage.setItem("speedmonitor:customize", "true");
+        if (location.pathname === "/statistics") window.dispatchEvent(new Event("speedmonitor:customize"));
+        else navigate("/statistics");
+    };
+
     const togglePause = async () => {
         if (!status.paused) {
             setShowPauseDialog(true);
@@ -97,6 +105,7 @@ const DropdownComponent = ({isOpen, switchDropdown}) => {
         {hr: true, key: 0, allowView: true, nav: true},
         {run: () => setShowOptimalValuesDialog(true), icon: faGauge, text: t("dropdown.optimal_values")},
         {run: () => setShowPlanDialog(true), icon: faFileContract, text: t("connection.configure")},
+        {run: customizeDashboard, icon: faTableCellsLarge, text: t("dashboard.customize")},
         {hr: true, key: 1},
         {run: () => setShowProviderDialog(true), icon: faSliders, text: t("dropdown.change_provider")},
         {run: () => setShowStorageDialog(true), icon: faHardDrive, text: t("dropdown.storage")},
