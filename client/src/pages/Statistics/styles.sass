@@ -87,20 +87,21 @@
     padding-right: 0
     gap: 1rem
 
-// Card widths: on wide screens a 24 column grid, below that the sizes become flex bases that wrap
-.dash-area
-  .dash-span-3
-    flex-basis: 14%
-  .dash-span-4
-    flex-basis: 20%
-  .dash-span-6
-    flex-basis: 28%
-  .dash-span-8
-    flex-basis: 38%
-  .dash-span-12
-    flex-basis: 46%
-  .dash-span-24
-    flex-basis: 100%
+// Card widths (--span, in 24ths) and heights (--rows): on wide screens a 24 column grid, below that
+// each 24th becomes a 4% flex basis so the cards wrap and fill the row
+.dash-area .dash-card
+  flex-basis: calc(var(--span, 6) * 4%)
+
+.dash-area .dash-tall
+  min-height: calc(var(--rows) * 18rem + (var(--rows) - 1) * 2rem)
+
+  > .stats-container > .stats-content
+    flex: 1 1 auto
+    height: auto
+    max-height: none
+
+  > .chart-container > .chart-body
+    max-height: none
 
 @media screen and (max-width: 900px)
   .dash-area .dash-card
@@ -169,10 +170,12 @@
 
     > .dash-card
       min-width: 0
+      min-height: 0
+      // The rows share the screen height; without this a chart's own size would make its row grow
+      contain: size
 
-      @each $span in 3, 4, 6, 8, 12, 24
-        &.dash-span-#{$span}
-          grid-column: span $span
+      grid-column: span var(--span, 6)
+      grid-row: span var(--rows, 1)
 
       > .stats-container > .stats-content
         flex: 1 1 auto

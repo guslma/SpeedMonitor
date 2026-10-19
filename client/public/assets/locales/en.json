@@ -690,23 +690,14 @@
   },
   "dashboard": {
     "customize": "Customize dashboard",
-    "help": "Drag the cards or use the arrows to change the order. Pick a size and hide what you don't want to see.",
+    "help": "Drag the cards or use the arrows to change the order. Pull a card's corner to change its width and height. Hide what you don't want to see.",
     "reset": "Restore default",
     "cancel": "Cancel",
     "save": "Save",
     "move_left": "Move back",
     "move_right": "Move forward",
-    "size": "Size",
     "visible": "Shown",
     "hidden": "Hidden",
-    "sizes": {
-      "3": "1/8 of a row",
-      "4": "1/6 of a row",
-      "6": "1/4 of a row",
-      "8": "1/3 of a row",
-      "12": "Half",
-      "24": "Full row"
-    },
     "cards": {
       "overview": "Overview",
       "latest": "Latest test",
@@ -718,6 +709,10 @@
       "upload": "Upload chart",
       "ping": "Ping chart",
       "hourly": "Speed by hour"
-    }
+    },
+    "resize": "Drag to resize",
+    "width": "{{percent}}% wide",
+    "height_one": "1 row",
+    "height_other": "{{count}} rows"
   }
 }

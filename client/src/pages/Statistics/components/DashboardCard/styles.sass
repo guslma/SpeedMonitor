@@ -77,13 +77,42 @@
   align-items: center
   max-width: 100%
 
-  button
+  > button:not(.dash-edit-visibility)
     width: 2.4rem
 
-  select
-    padding: 0 0.6rem
-    min-width: 0
-    max-width: 100%
+.dash-edit-size
+  color: $subtext
+  font-size: 0.9rem
+  font-variant-numeric: tabular-nums
+
+// Corner handle that resizes the card
+.dash-resize
+  position: absolute
+  right: 0.4rem
+  bottom: 0.4rem
+  width: 2.2rem
+  height: 2.2rem
+  display: flex
+  align-items: center
+  justify-content: center
+  border-radius: 0.6rem
+  border: 1px solid $accent-primary
+  background: $darker-gray
+  color: $accent-primary
+  cursor: nwse-resize
+  touch-action: none
+
+  svg
+    transform: rotate(90deg)
+
+.dash-resizing
+  outline-color: $accent-primary
+  cursor: nwse-resize
+  user-select: none
+
+  .dash-edit-size
+    color: $accent-primary
+    font-weight: 600
 
 .dash-edit-visibility
   display: flex

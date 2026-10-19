@@ -33,17 +33,18 @@ const configDefaults = {
     dashboardLayout: "default"
 }
 
-const DASHBOARD_SIZES = [3, 4, 6, 8, 12, 24];
-
-// The statistics page layout: the cards in order, each with a width in 24ths of the row and whether it is shown
+// The statistics page layout: the cards in order, each with a width in 24ths of the row (3 to 24),
+// a height in rows (1 to 3) and whether it is shown
 const validateLayout = (value) => {
     if (value === "default") return value;
     try {
         const layout = JSON.parse(value);
         if (!Array.isArray(layout) || layout.length === 0 || layout.length > 30) return null;
-        const cards = layout.map(({id, size, visible}) => ({id, size, visible}));
+        const cards = layout.map(({id, size, rows = 1, visible}) => ({id, size, rows, visible}));
         const valid = cards.every((card) => typeof card.id === "string" && /^[A-Za-z]{1,30}$/.test(card.id)
-            && DASHBOARD_SIZES.includes(card.size) && typeof card.visible === "boolean");
+            && Number.isInteger(card.size) && card.size >= 3 && card.size <= 24
+            && Number.isInteger(card.rows) && card.rows >= 1 && card.rows <= 3
+            && typeof card.visible === "boolean");
         return valid ? JSON.stringify(cards) : null;
     } catch {
         return null;
