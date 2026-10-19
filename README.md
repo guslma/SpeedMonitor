@@ -22,6 +22,7 @@ O SpeedMonitor roda testes de velocidade automaticamente (download, upload, ping
 - **Painel personalizável**: arraste os cards para mudar a ordem, puxe o canto para mudar a largura e a altura, e oculte o que não quiser ver (botão de grade no cabeçalho ou Configurações → Personalizar painel)
 - **Tema claro e escuro**, layout que aproveita telas grandes e se ajusta ao celular
 - **Várias instâncias** num painel só e **métricas para Prometheus e Grafana**
+- **Add-on para o Home Assistant** no repositório [guslma/homeassistant-addons](https://github.com/guslma/homeassistant-addons)
 
 ## Telas
 
@@ -59,7 +60,22 @@ Funciona em qualquer máquina Linux que fique ligada, como um mini PC, um Raspbe
 curl -fsSL https://get.docker.com | sudo sh
 ```
 
-**2. Baixe o código e gere a imagem:**
+**2. Inicie o SpeedMonitor** com a imagem pronta:
+
+```bash
+sudo docker run -d --name speedmonitor \
+  -p 5216:5216 \
+  -e TZ=America/Sao_Paulo \
+  -v ~/speedmonitor-data:/app/data \
+  --restart unless-stopped \
+  ghcr.io/guslma/speedmonitor:latest
+```
+
+Pronto, pule para o passo 4. A imagem funciona em computadores comuns (amd64) e em Raspberry Pi e outros ARM de 64 bits (arm64).
+
+Se preferir gerar a imagem a partir do código:
+
+**2b. Baixe o código e gere a imagem:**
 
 ```bash
 git clone https://github.com/guslma/SpeedMonitor.git
@@ -95,6 +111,15 @@ sudo docker run -d --name speedmonitor \
 
 ### Atualizar
 
+Com a imagem pronta:
+
+```bash
+sudo docker pull ghcr.io/guslma/speedmonitor:latest
+sudo docker rm -f speedmonitor
+```
+
+Depois, rode de novo o comando do passo 2. Se você gerou a imagem a partir do código:
+
 ```bash
 cd SpeedMonitor
 git pull
@@ -102,7 +127,7 @@ sudo docker build -t speedmonitor .
 sudo docker rm -f speedmonitor
 ```
 
-Depois, rode de novo o comando do passo 3. O histórico continua em `~/speedmonitor-data`.
+Depois, rode de novo o comando do passo 3. Nos dois casos, o histórico continua em `~/speedmonitor-data`.
 
 ### Acessar de fora de casa
 
