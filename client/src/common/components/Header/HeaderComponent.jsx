@@ -2,6 +2,7 @@ import "./styles.sass";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faTableCellsLarge,
+    faFileLines,
     faCircleArrowUp, faDownload,
     faGaugeHigh,
     faGear,
@@ -28,6 +29,7 @@ import Tooltip from "@/common/components/Tooltip";
 import DateRangePicker from "@/common/components/DateRangePicker";
 import ExportButton from "@/common/components/ExportButton";
 import { StatisticsRangeContext } from "@/common/contexts/StatisticsRange";
+import { formatDateParam } from "@/common/utils/ConnectionUtil";
 
 const HeaderComponent = () => {
     const findNode = useContext(NodeContext)[4];
@@ -160,6 +162,10 @@ const HeaderComponent = () => {
                         <DateRangePicker from={dateRange.from} to={dateRange.to} compact
                                          onChange={(from, to) => setDateRange({from, to})} />
                         <ExportButton dateRange={dateRange} compact />
+                        <Tooltip content={t("connection.report")} position="bottom">
+                            <FontAwesomeIcon icon={faFileLines} className="header-icon report-icon"
+                                             onClick={() => navigate(`/report?from=${formatDateParam(dateRange.from)}&to=${formatDateParam(dateRange.to)}`)}/>
+                        </Tooltip>
                         {!config.viewMode && <Tooltip content={t("dashboard.customize")} position="bottom">
                             <FontAwesomeIcon icon={faTableCellsLarge} className="header-icon customize-icon"
                                              onClick={() => window.dispatchEvent(new Event("speedmonitor:customize"))}/>
