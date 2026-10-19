@@ -648,8 +648,6 @@
     "downtime": "Time offline",
     "no_outages_period": "No outages in this period.",
     "ongoing": "Ongoing",
-    "estimated": "Estimated from tests",
-    "estimated_note": "Outages \"estimated from tests\" are from before continuous monitoring: they go from the first failed test to the next successful one, so the real duration may be shorter.",
     "configure": "Plan and connection",
     "report": "Create report",
     "report_title": "Internet quality report",

@@ -37,7 +37,7 @@ export const OutageTable = ({outages, preferences, limit}) => {
                     <td>{outage.ongoing ? <span className="icon-red">{t("connection.ongoing")}</span>
                         : formatDateTime(outage.end, preferences, {day: "2-digit", month: "2-digit"})}</td>
                     <td>{formatDuration(outage.duration)}</td>
-                    <td>{outage.source === "speedtest" ? t("connection.estimated") : causeLabel(outage.cause)}</td>
+                    <td>{causeLabel(outage.cause)}</td>
                 </tr>
             ))}
             </tbody>
@@ -104,8 +104,6 @@ export const ConnectionDetails = ({summary, dateRange, onConfigure}) => {
             <div className="connection-scroll">
                 <OutageTable outages={summary.outages} preferences={preferences}/>
             </div>
-            {summary.outages.some((outage) => outage.source === "speedtest") &&
-                <p className="connection-note">{t("connection.estimated_note")}</p>}
 
             <h3>{t("connection.plan_title")}</h3>
             {plan.configured ? <>

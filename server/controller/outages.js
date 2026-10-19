@@ -17,9 +17,6 @@ export const finish = async (outage, endTime = new Date()) => {
 // Outages left open by a restart end at the last moment they were seen
 export const closeStale = () => outages.update({ongoing: false}, {where: {ongoing: true}});
 
-// The estimated outages overlap the ones the monitor saw, so they only count before the monitor existed
-const firstMonitored = async () => (await outages.findOne({where: {source: "monitor"}, order: [["start", "ASC"]]}))?.start;
-
 export const removeOld = async (days) => {
     if (!days) return;
     await outages.destroy({where: {ongoing: false, end: {[Op.lt]: new Date(Date.now() - days * 86400000).toISOString()}}});
@@ -36,15 +33,13 @@ export const summary = async (fromDate, toDate) => {
     const from = Math.max(new Date(fromYear, fromMonth - 1, fromDay).getTime(), monitoredSince);
     const to = Math.min(new Date(toYear, toMonth - 1, toDay, 23, 59, 59, 999).getTime(), now);
 
-    const monitorStart = await firstMonitored();
     const list = (await outages.findAll({order: [["start", "DESC"]]}))
-        .filter((outage) => outage.source === "monitor" || !monitorStart || outage.start < monitorStart)
         .map((outage) => {
             const start = new Date(outage.start).getTime();
             const end = outage.ongoing ? now : new Date(outage.end).getTime();
             return {
                 id: outage.id, start: outage.start, end: outage.ongoing ? null : outage.end,
-                ongoing: outage.ongoing, cause: outage.cause, source: outage.source,
+                ongoing: outage.ongoing, cause: outage.cause,
                 duration: Math.max(0, Math.round((end - start) / 1000)),
                 counted: Math.max(0, Math.min(end, to) - Math.max(start, from))
             };

@@ -159,8 +159,6 @@ export const Report = () => {
 
             <h3>{t("connection.outages")}</h3>
             <OutageTable outages={summary.outages} preferences={preferences}/>
-            {summary.outages.some((outage) => outage.source === "speedtest") &&
-                <p className="connection-note">{t("connection.estimated_note")}</p>}
 
             {plan.configured && <>
                 <h3>{t("connection.below_min_title", {percent: plan.rules.instantMin})}</h3>

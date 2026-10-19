@@ -1,8 +1,6 @@
-import { DataTypes, QueryTypes } from 'sequelize';
-import db from '../config/database.js';
+import { DataTypes } from 'sequelize';
 
-// Creates the outages table and estimates past outages from runs of failed speedtests:
-// from the first failed test to the next successful one
+// Creates the table where the connection check records outages
 export async function up(queryInterface) {
     const tables = await queryInterface.showAllTables();
     if (!tables.includes('outages')) {
@@ -15,19 +13,4 @@ export async function up(queryInterface) {
             source: { type: DataTypes.STRING, defaultValue: 'monitor' }
         });
     }
-
-    const tests = await db.query('SELECT created, error FROM speedtests ORDER BY created ASC', { type: QueryTypes.SELECT });
-    const outages = [];
-    let start = null;
-    for (const test of tests) {
-        const created = new Date(test.created).toISOString();
-        if (test.error !== null) {
-            if (start === null) start = created;
-        } else if (start !== null) {
-            outages.push({ start, end: created, ongoing: false, cause: 'unknown', source: 'speedtest' });
-            start = null;
-        }
-    }
-
-    if (outages.length > 0) await queryInterface.bulkInsert('outages', outages);
 }

@@ -648,8 +648,6 @@
     "downtime": "Tempo fora do ar",
     "no_outages_period": "Nenhuma queda registrada no período.",
     "ongoing": "Em andamento",
-    "estimated": "Estimada pelos testes",
-    "estimated_note": "Quedas \"estimadas pelos testes\" são de antes da monitoração contínua: vão do primeiro teste com falha até o próximo teste bem-sucedido, então a duração real pode ser menor.",
     "configure": "Plano e conexão",
     "report": "Gerar relatório",
     "report_title": "Relatório de qualidade da internet",

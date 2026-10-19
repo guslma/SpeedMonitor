@@ -25,7 +25,7 @@ export default db.define("outages", {
         type: Sequelize.STRING,
         defaultValue: "unknown"
     },
-    // "monitor" for outages seen by the connection check, "speedtest" for outages estimated from failed tests
+    // Where the outage was recorded ("monitor" is the connection check)
     source: {
         type: Sequelize.STRING,
         defaultValue: "monitor"
