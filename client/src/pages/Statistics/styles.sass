@@ -1,0 +1,138 @@
+@use "@/common/styles/colors" as *
+
+.statistic-area
+  width: 100%
+  max-width: calc(100% - 2rem)
+  padding-left: 20rem
+  padding-right: 20rem
+  padding-top: 1.5rem
+  margin-bottom: 2rem
+  display: flex
+  gap: 2rem
+  justify-content: space-between
+  flex-wrap: wrap
+  box-sizing: border-box
+
+.statistic-stale
+  opacity: 0.7
+  transition: opacity 0.2s ease
+
+.statistic-loading
+  .skeleton-chart
+    flex: 1 1 30%
+    min-width: 16rem
+    height: 18rem
+    background: linear-gradient(90deg, $darker-gray 25%, $dark-gray 50%, $darker-gray 75%)
+    background-size: 200% 100%
+    border-radius: 1rem
+    border: 1px solid $light-gray
+    opacity: 0
+    transform: translateY(10px)
+    
+    &.skeleton-visible
+      animation: skeleton-shimmer 1.5s infinite, skeleton-fade-in 0.3s ease forwards
+
+@keyframes skeleton-shimmer
+  0%
+    background-position: 200% 0
+  100%
+    background-position: -200% 0
+
+@keyframes skeleton-fade-in
+  0%
+    opacity: 0
+    transform: translateY(10px)
+  100%
+    opacity: 1
+    transform: translateY(0)
+
+.statistics-empty
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 6rem 2rem
+  
+  p
+    font-size: 1.1rem
+    font-weight: 500
+    color: $subtext
+    text-align: center
+
+@media screen and (max-width: 1472px)
+  .statistic-area
+    padding-left: 10rem
+    padding-right: 10rem
+
+@media screen and (max-width: 1200px)
+  .statistic-area
+    padding-left: 4rem
+    padding-right: 4rem
+
+@media screen and (max-width: 900px)
+  .statistic-area
+    padding-left: 1rem
+    padding-right: 1rem
+    gap: 1.25rem
+
+// Keep the last card clear of the floating page switcher
+@media screen and (max-width: 768px)
+  .statistic-area
+    margin-bottom: 6rem
+
+@media screen and (max-width: 600px)
+  .statistic-area
+    max-width: 100%
+    padding-left: 0
+    padding-right: 0
+    gap: 1rem
+
+// Wide screens: use the full width and fit every card into the viewport height
+@media screen and (min-width: 1900px)
+  #root:has(> main > .statistic-area)
+    display: flex
+    flex-direction: column
+    min-height: 100dvh
+
+  main:has(> .statistic-area)
+    flex: 1 1 auto
+
+  .statistic-area
+    padding-left: 3rem
+    padding-right: 3rem
+
+  .statistic-area:not(.statistic-loading)
+    flex: 1 1 auto
+    display: grid
+    grid-template-columns: repeat(24, minmax(0, 1fr))
+    grid-template-rows: repeat(2, minmax(15rem, 1fr))
+    gap: 1.5rem
+
+    > .statistics-empty
+      grid-column: 1 / -1
+
+    > .stats-container
+      grid-row: 1
+      grid-column: span 4
+      min-width: 0
+
+      &.container-large
+        grid-column: span 5
+
+      &.container-small
+        grid-column: span 3
+
+      > .stats-content
+        flex: 1 1 auto
+        height: auto
+        max-height: none
+        min-height: 0
+
+    > .chart-container
+      grid-row: 2
+      grid-column: span 6
+      min-width: 0
+
+      > .chart-body
+        min-height: 0
+        max-height: none

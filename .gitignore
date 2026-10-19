@@ -1,0 +1,26 @@
+# code editors
+/.idea
+
+# dependencies
+/node_modules
+/client/node_modules
+/.pnp
+.pnp.js
+
+# generated
+/server/migrations/index.js
+/server/integrations/index.js
+/server/clientEmbed.js
+
+# production
+/build
+/data
+/bin
+/SpeedMonitor
+/SpeedMonitor.exe
+
+# docs
+/docs/.vitepress/dist
+/docs/.vitepress/cache
+# local Docker build config
+/.docker-cfg
