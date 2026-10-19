@@ -54,7 +54,9 @@ export const summary = async (fromDate, toDate) => {
     const period = Math.max(0, to - from);
     const downtime = list.reduce((sum, outage) => sum + outage.counted, 0);
 
+    const firstDay = firstTest ? new Date(firstTest.created) : null;
     return {
+        firstTest: firstDay && `${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, "0")}-${String(firstDay.getDate()).padStart(2, "0")}`,
         availability: period > 0 ? parseFloat((100 - downtime / period * 100).toFixed(2)) : null,
         count: list.length,
         downtime: Math.round(downtime / 1000),

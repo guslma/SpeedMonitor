@@ -686,6 +686,17 @@
       "monitor": "Detectar quedas de internet (checagem leve a cada 30 segundos)",
       "router": "Endereço do roteador",
       "router_description": "Opcional. Com ele, o SpeedMonitor diz se a queda foi do provedor ou da sua rede."
+    },
+    "period": {
+      "this_month": "Este mês",
+      "last_month": "Mês passado",
+      "last_3": "Últimos 3 meses",
+      "last_6": "Últimos 6 meses",
+      "last_12": "Últimos 12 meses",
+      "all": "Todo o histórico",
+      "from": "De",
+      "to": "Até",
+      "apply": "Aplicar"
     }
   },
   "dashboard": {

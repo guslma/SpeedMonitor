@@ -686,6 +686,17 @@
       "monitor": "Detect internet outages (light check every 30 seconds)",
       "router": "Router address",
       "router_description": "Optional. With it, SpeedMonitor tells whether an outage came from the provider or from your network."
+    },
+    "period": {
+      "this_month": "This month",
+      "last_month": "Last month",
+      "last_3": "Last 3 months",
+      "last_6": "Last 6 months",
+      "last_12": "Last 12 months",
+      "all": "All history",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply"
     }
   },
   "dashboard": {

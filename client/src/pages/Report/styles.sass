@@ -21,12 +21,99 @@
   .dialog-btn
     margin: 0
 
+.report-period
+  display: flex
+  flex-direction: column
+  gap: 0.75rem
+  padding: 1rem
+  margin-bottom: 1.5rem
+  border: 1px solid $light-gray
+  border-radius: 0.9rem
+  background: var(--glass-bg)
+
+.report-presets, .report-custom
+  display: flex
+  flex-wrap: wrap
+  gap: 0.5rem
+  align-items: flex-end
+
+.report-chip
+  font: inherit
+  font-size: 0.9rem
+  padding: 0.45rem 0.9rem
+  border-radius: 999px
+  border: 1px solid $light-gray
+  background: $darker-gray
+  color: $white
+  cursor: pointer
+
+  &:hover
+    border-color: $accent-primary
+
+.report-chip-active
+  border-color: $accent-primary
+  background: $accent-primary
+  color: #fff
+
+.report-custom
+  label
+    display: flex
+    flex-direction: column
+    gap: 0.25rem
+    color: $subtext
+    font-size: 0.8rem
+
+  input
+    font: inherit
+    font-size: 0.9rem
+    padding: 0.4rem 0.6rem
+    border-radius: 0.6rem
+    border: 1px solid $light-gray
+    background: $darker-gray
+    color: $white
+    color-scheme: dark light
+
+// Phones: the shortcuts stay in one row that scrolls sideways, and the dates sit side by side
+@media screen and (max-width: 600px)
+  .report-period
+    padding: 0.75rem
+
+  .report-presets
+    flex-wrap: nowrap
+    overflow-x: auto
+    scrollbar-width: none
+    margin: 0 -0.75rem
+    padding: 0 0.75rem
+
+    &::-webkit-scrollbar
+      display: none
+
+  .report-chip
+    flex-shrink: 0
+    white-space: nowrap
+
+  .report-custom
+    label
+      flex: 1 1 40%
+      min-width: 0
+
+    input
+      width: 100%
+      box-sizing: border-box
+
+    button
+      flex: 1 1 100%
+
+.report-loading
+  opacity: 0.6
+  transition: opacity 0.2s ease
+
 // Print only the report, in black on white
 @media print
   body
     background: #fff !important
 
-  header, .pagination, .report-toolbar, .back-to-top-button
+  header, .pagination, .report-toolbar, .report-period, .back-to-top-button
     display: none !important
 
   .report-page
