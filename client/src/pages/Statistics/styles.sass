@@ -193,3 +193,74 @@
 
     > .dash-toolbar
       align-self: start
+
+// Notebooks (telas de 1000 a 1899px de largura e de 830 a 1100px de altura): o painel também cabe
+// inteiro na tela, sem rolar. Mesma grade das telas largas, com espaços e letras mais compactos.
+@media screen and (min-width: 1000px) and (max-width: 1899.98px) and (min-height: 830px) and (max-height: 1100px)
+  #root:has(> main > .statistic-area)
+    display: flex
+    flex-direction: column
+    height: 100dvh
+
+  main:has(> .statistic-area)
+    flex: 1 1 auto
+    min-height: 0
+    display: flex
+    flex-direction: column
+
+  .statistic-area
+    padding-left: 2rem
+    padding-right: 2rem
+    padding-top: 0.5rem
+    margin-bottom: 1rem
+
+  .statistic-area:not(.statistic-loading):not(.dash-area-editing)
+    flex: 1 1 auto
+    min-height: 0
+    display: grid
+    // Três cartões por fileira, todos da mesma largura (as larguras do painel são pensadas para telas grandes)
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    grid-auto-rows: minmax(0, 1fr)
+    gap: 0.9rem
+
+    > .statistics-empty
+      grid-column: 1 / -1
+
+    > .dash-card
+      min-width: 0
+      min-height: 0
+      contain: size
+      grid-column: auto
+      grid-row: auto
+
+      > .stats-container
+        min-width: 0
+        height: 100%
+
+        > .stats-header
+          font-size: 13pt
+          padding: 0.7rem 0.75rem 0.35rem 1rem
+
+        > .stats-content
+          flex: 1 1 auto
+          height: auto
+          max-height: none
+          min-height: 0
+          padding: 0 1rem 0.7rem 1rem
+
+      > .chart-container
+        height: 100%
+
+        > .chart-body
+          min-height: 0
+          max-height: none
+
+  .value-container
+    gap: clamp(0.4rem, 2.2vh, 1.75rem)
+
+  .value-item svg
+    width: 1.9rem
+    height: 1.9rem
+
+  .value-item .value-info h2
+    font-size: 13pt
