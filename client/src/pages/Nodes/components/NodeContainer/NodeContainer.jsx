@@ -5,6 +5,7 @@ import {
     faArrowUp,
     faCircleNotch,
     faClock,
+    faEllipsisVertical,
     faExclamationTriangle,
     faKey,
     faPen,
@@ -16,7 +17,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {NodeContext} from "@/common/contexts/Node";
 import {useAlert} from "@/common/contexts/Alert";
 import {ToastNotificationContext} from "@/common/contexts/ToastNotification";
-import {baseRequest, patchRequest} from "@/common/utils/RequestUtil";
+import {baseRequest} from "@/common/utils/RequestUtil";
 import {t} from "i18next";
 import {Trans} from "react-i18next";
 import {getIconBySpeed} from "@/common/utils/TestUtil";
@@ -119,6 +120,13 @@ export const NodeContainer = (node) => {
         setContextMenu({x: event.clientX, y: event.clientY});
     };
 
+    // The ⋯ button opens the same menu under itself, for those who don't right click (phones, tablets)
+    const openMenu = (event) => {
+        event.stopPropagation();
+        const box = event.currentTarget.getBoundingClientRect();
+        setContextMenu({x: box.left, y: box.bottom + 6});
+    };
+
     const closeContextMenu = () => setContextMenu(null);
 
     const handleRename = async () => {
@@ -128,8 +136,11 @@ export const NodeContainer = (node) => {
             value: node.name
         });
 
-        if (newName && newName !== node.name) {
-            await patchRequest(`/nodes/${node.id}/name`, {name: newName});
+        const name = newName?.trim();
+        if (name && name !== node.name) {
+            // Always this server's list, also while another server is the one being viewed
+            const res = await baseRequest(`/nodes/${node.id}/name`, "PATCH", {name}).catch(() => null);
+            if (!res?.ok) return updateToast(t("nodes.rename.error"), "red", faExclamationTriangle);
             updateToast(t("nodes.rename.success"), "green", faPen);
             updateNodes();
         }
@@ -230,6 +241,13 @@ export const NodeContainer = (node) => {
                     )}
                 </div>
 
+                {/* This server can't be renamed or deleted: an empty space keeps its numbers lined up with the others */}
+                {node.currentNode ? <span className="node-menu node-menu-space"/> : (
+                    <button className="node-menu" title={t("nodes.options")} aria-label={t("nodes.options")}
+                            onClick={openMenu}>
+                        <FontAwesomeIcon icon={faEllipsisVertical}/>
+                    </button>
+                )}
             </div>
         </>
     );

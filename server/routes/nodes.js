@@ -13,7 +13,7 @@ app.put("/", password(false), async (req, res) => {
     if (process.env.PREVIEW_MODE === "true")
         return res.status(403).json({message: "For security reasons, you can't create nodes in preview mode"});
 
-    if (!req.body.name || !req.body.url) return res.status(400).json({message: "Missing parameters", type: "MISSING_PARAMETERS"});
+    if (!req.body.url) return res.status(400).json({message: "Missing parameters", type: "MISSING_PARAMETERS"});
 
     const url = req.body.url.replace(/\/+$/, "");
 
@@ -24,7 +24,9 @@ app.put("/", password(false), async (req, res) => {
         if (result === "PASSWORD_REQUIRED")
             return res.status(400).json({message: "Invalid password", type: "PASSWORD_REQUIRED"});
 
-        res.json({id: (await nodes.create(req.body.name, url, req.body.password)).id, type: "NODE_CREATED"});
+        // Without a name, the server is listed with the name it has in its own preferences
+        const name = req.body.name?.toString().trim() || await nodes.remoteName(url, req.body.password);
+        res.json({id: (await nodes.create(name, url, req.body.password)).id, type: "NODE_CREATED"});
     });
 });
 

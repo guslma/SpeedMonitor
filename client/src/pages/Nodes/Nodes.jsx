@@ -9,6 +9,7 @@ import {ConfigContext} from "@/common/contexts/Config";
 import {useAlert} from "@/common/contexts/Alert";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {baseRequest} from "@/common/utils/RequestUtil";
 
 export const Nodes = () => {
     const [config] = useContext(ConfigContext);
@@ -20,8 +21,14 @@ export const Nodes = () => {
         alert.openAlert(t("preview.title"), t("nodes.preview_active"), {buttonText: t("dialog.close")});
     }
 
+    // The name this server has in its preferences (the config context may belong to another server being viewed)
+    const [ownName, setOwnName] = useState(null);
+
     useEffect(() => {
         updateNodes();
+        baseRequest("/config").then((res) => res.json()).then((own) => {
+            if (own.serverName && own.serverName !== "none") setOwnName(own.serverName);
+        }).catch(() => {});
     }, []);
 
     return (
@@ -29,7 +36,8 @@ export const Nodes = () => {
             <CreateNodeDialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)}/>
             <NodeHeader/>
             <div className="node-area">
-                <NodeContainer name={t("nodes.this_server")} url={location.host} currentNode={true} id={0}/>
+                <NodeContainer name={ownName || t("nodes.this_server")}
+                               url={ownName ? `${t("nodes.this_server")} · ${location.host}` : location.host} currentNode={true} id={0}/>
 
                 {nodes.map(node => <NodeContainer {...node} key={node.id} />)}
 

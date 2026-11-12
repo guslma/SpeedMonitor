@@ -378,6 +378,7 @@
   },
   "nodes": {
     "add": "Adicionar servidor",
+    "options": "Opções do servidor",
     "create": "Adicionar",
     "this_server": "Esse servidor",
     "created": "O servidor foi adicionado com sucesso",
@@ -387,7 +388,7 @@
     "password_updated": "A senha foi atualizada com sucesso",
     "preview_active": "A adição e a exclusão de servidores são desativadas durante o modo de demonstração.",
     "placeholder": {
-      "name": "Instância SpeedMonitor",
+      "name": "Opcional: usa o nome definido no servidor",
       "url": "https://your-server.com"
     },
     "group": {
@@ -403,7 +404,8 @@
     "rename": {
       "title": "Renomear o servidor",
       "placeholder": "Novo nome do servidor",
-      "success": "O servidor foi renomeado com sucesso"
+      "success": "O servidor foi renomeado com sucesso",
+      "error": "Não foi possível renomear o servidor"
     },
     "messages": {
       "not_reachable": "O servidor não pode ser acessado",
@@ -598,6 +600,11 @@
   },
   "preferences": {
     "title": "Preferências",
+    "server_name": {
+      "title": "Nome do servidor",
+      "description": "Aparece no topo do painel e na lista de servidores, para saber qual você está vendo.",
+      "error": "Não foi possível salvar o nome do servidor"
+    },
     "theme": {
       "title": "Aparência",
       "description": "Alternar entre a interface escura e clara.",

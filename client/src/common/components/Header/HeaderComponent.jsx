@@ -106,7 +106,13 @@ const HeaderComponent = () => {
         if (!config.viewMode) updateVersion();
     }, [config]);
 
-    const getNodeName = () => currentNode === "0" ? t("header.title") : findNode(currentNode)?.name || t("header.title");
+    // This server shows the name from its preferences; another one the name it was added with
+    const ownName = config.serverName && config.serverName !== "none" ? config.serverName : t("header.title");
+    const getNodeName = () => findNode(currentNode)?.name || ownName;
+
+    useEffect(() => {
+        document.title = ownName === t("header.title") ? ownName : `${ownName} · ${t("header.title")}`;
+    }, [ownName]);
 
     if (location.pathname === "/nodes") return <></>;
     if (Object.keys(config).length === 0) return <></>;
@@ -116,7 +122,7 @@ const HeaderComponent = () => {
             <AboutDialog open={showAboutDialog} onClose={() => setShowAboutDialog(false)}/>
             <div className="header-main">
                 <div className="header-left">
-                    {config.viewMode && <h2>{t("header.title")}</h2>}
+                    {config.viewMode && <h2>{ownName}</h2>}
                     {!config.viewMode && <h2 className="header-about" onClick={() => setShowAboutDialog(true)}><img src="/assets/img/logo192.png" alt="SpeedMonitor" className="header-logo" /> {getNodeName()}</h2>}
 
                     {config.previewMode && <h2 className="demo-info" onClick={showDemoDialog}>{t("preview.info")}</h2>}

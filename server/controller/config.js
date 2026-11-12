@@ -30,8 +30,12 @@ const configDefaults = {
     planUpload: "none",
     router: "none",
     outageMonitor: "true",
-    dashboardLayout: "default"
+    dashboardLayout: "default",
+    serverName: "none"
 }
+
+// The name shown in the header and in the server list, so instances monitored together can be told apart
+export const MAX_SERVER_NAME = 40;
 
 // The statistics page layout: the cards in order, each with a width in 24ths of the row (3 to 24),
 // a height in quarters of a row (3 to 12) and whether it is shown. Layouts saved before 1.3 have whole rows instead.
@@ -141,6 +145,12 @@ export const validateInput = async (key, value) => {
     if (key === "outageMonitor" && !["true", "false"].includes(value))
         return "You need to provide either true or false";
 
+    if (key === "serverName") {
+        value = value.toString().trim() || "none";
+        if (value.length > MAX_SERVER_NAME || /[\u0000-\u001f\u007f]/.test(value))
+            return `The server name must have ${MAX_SERVER_NAME} characters or less`;
+    }
+
     if (key === "dashboardLayout") {
         value = validateLayout(value.toString());
         if (value === null) return "You need to provide a valid layout";
@@ -186,6 +196,9 @@ export const validateInput = async (key, value) => {
 
     if (process.env.PREVIEW_MODE === "true" && (key === "password" || key === "passwordLevel"))
         return "You can't change the password in preview mode";
+
+    if (process.env.PREVIEW_MODE === "true" && key === "serverName")
+        return "You can't change the server name in preview mode";
 
     return {value: value};
 }

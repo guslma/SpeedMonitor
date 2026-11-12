@@ -35,6 +35,19 @@ export const checkStatus = async (url, password) => {
     }
 }
 
+// The name the other instance gave itself in its preferences, or its address when it has none
+export const remoteName = async (url, password) => {
+    try {
+        const res = await fetch(url + "/api/config", {
+            headers: writePasswordHeaders(password),
+            signal: AbortSignal.timeout(STATUS_TIMEOUT)
+        });
+        const name = (await res.json()).serverName;
+        if (typeof name === "string" && name !== "none" && name.trim()) return name.trim().slice(0, 40);
+    } catch {}
+    return new URL(url).host;
+}
+
 const SKIP_HEADERS = new Set(["host", "content-length", "connection"]);
 const serverError = (res) => res.status(500).json({message: "Internal server error"});
 

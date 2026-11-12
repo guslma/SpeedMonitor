@@ -378,6 +378,7 @@
   },
   "nodes": {
     "add": "Add server",
+    "options": "Server options",
     "create": "Add",
     "this_server": "This server",
     "created": "The server has been successfully added",
@@ -387,7 +388,7 @@
     "password_updated": "The password has been successfully updated",
     "preview_active": "Adding and deleting servers is disabled during demo mode.",
     "placeholder": {
-      "name": "SpeedMonitor instance",
+      "name": "Optional: uses the name set on that server",
       "url": "https://your-server.com"
     },
     "group": {
@@ -403,7 +404,8 @@
     "rename": {
       "title": "Rename server",
       "placeholder": "New server name",
-      "success": "The server has been renamed successfully"
+      "success": "The server has been renamed successfully",
+      "error": "The server could not be renamed"
     },
     "messages": {
       "not_reachable": "Server is not reachable",
@@ -598,6 +600,11 @@
   },
   "preferences": {
     "title": "Preferences",
+    "server_name": {
+      "title": "Server name",
+      "description": "Shown at the top of the dashboard and in the server list, so you know which one you are looking at.",
+      "error": "The server name could not be saved"
+    },
     "theme": {
       "title": "Appearance",
       "description": "Switch between dark and light interface.",

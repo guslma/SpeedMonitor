@@ -1,7 +1,7 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Dialog, DialogHeader, DialogBody, DialogFooter} from "@/common/contexts/Dialog";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faClock, faGauge, faMoon, faPalette, faSun} from "@fortawesome/free-solid-svg-icons";
+import {faCheck, faClock, faGauge, faMoon, faPalette, faServer, faSun, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {t} from "i18next";
 import {ToastNotificationContext} from "@/common/contexts/ToastNotification";
 import {ThemeContext} from "@/common/contexts/Theme";
@@ -13,7 +13,12 @@ import {
     TIME_FORMAT_12H,
     TIME_FORMAT_24H
 } from "@/common/contexts/Preferences";
+import {ConfigContext} from "@/common/contexts/Config";
+import {patchRequest} from "@/common/utils/RequestUtil";
 import "./styles.sass";
+
+const MAX_SERVER_NAME = 40;
+const savedName = (config) => config.serverName && config.serverName !== "none" ? config.serverName : "";
 
 const THEME_OPTIONS = [
     {id: "dark", labelKey: "preferences.theme.dark", descKey: "preferences.theme.dark_desc", icon: faMoon},
@@ -61,8 +66,26 @@ export const PreferencesDialog = ({open, onClose}) => {
     const [timeFormat, setTimeFormat] = useState(preferences.timeFormat);
     const [speedUnit, setSpeedUnit] = useState(preferences.speedUnit);
     const [theme, setTheme] = useState(isDarkMode ? "dark" : "light");
+    const [config, reloadConfig] = useContext(ConfigContext);
+    // Only admins can name the server, and not in the demo
+    const canName = !config.viewMode && !config.previewMode;
+    const [serverName, setServerName] = useState(savedName(config));
 
-    const handleSave = (close) => {
+    // The config may arrive after the dialog is created, so read the name each time it opens
+    useEffect(() => {
+        if (open) setServerName(savedName(config));
+    }, [open]);
+
+    const handleSave = async (close) => {
+        const name = serverName.trim();
+        if (canName && name !== savedName(config)) {
+            const res = await patchRequest("/config/serverName", {value: name || "none"}).catch(() => null);
+            if (!res?.ok) {
+                updateToast(t("preferences.server_name.error"), "red", faXmark);
+                return;
+            }
+            reloadConfig();
+        }
         updatePreferences({timeFormat, speedUnit});
         const wantsDark = theme === "dark";
         if (wantsDark !== isDarkMode) toggleTheme();
@@ -74,6 +97,7 @@ export const PreferencesDialog = ({open, onClose}) => {
         setTimeFormat(preferences.timeFormat);
         setSpeedUnit(preferences.speedUnit);
         setTheme(isDarkMode ? "dark" : "light");
+        setServerName(savedName(config));
         onClose();
     };
 
@@ -84,6 +108,18 @@ export const PreferencesDialog = ({open, onClose}) => {
                     <DialogHeader onClose={close}>{t("preferences.title")}</DialogHeader>
                     <DialogBody>
                         <div className="preferences-content">
+                            {canName && <div className="preferences-section">
+                                <div className="preferences-section-header">
+                                    <FontAwesomeIcon icon={faServer}/>
+                                    <div>
+                                        <h3>{t("preferences.server_name.title")}</h3>
+                                        <p>{t("preferences.server_name.description")}</p>
+                                    </div>
+                                </div>
+                                <input type="text" className="dialog-input preferences-input" value={serverName}
+                                       maxLength={MAX_SERVER_NAME} placeholder={t("header.title")}
+                                       onChange={(event) => setServerName(event.target.value)}/>
+                            </div>}
                             <PreferencesSection
                                 icon={faPalette}
                                 title={t("preferences.theme.title")}
