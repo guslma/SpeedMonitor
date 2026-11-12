@@ -706,14 +706,10 @@
   },
   "dashboard": {
     "customize": "Personalizar painel",
-    "help": "Arraste os cards ou use as setas para mudar a ordem. Puxe o canto de um card para mudar a largura e a altura. Oculte o que não quiser ver.",
+    "help": "Arraste os cards para mudar a ordem e puxe o canto de baixo para mudar o tamanho. Toque no olho para ocultar um card: ele sai do painel e fica em \"Cards ocultos\".",
     "reset": "Restaurar padrão",
     "cancel": "Cancelar",
     "save": "Salvar",
-    "move_left": "Mover para trás",
-    "move_right": "Mover para frente",
-    "visible": "Visível",
-    "hidden": "Oculto",
     "cards": {
       "overview": "Visão geral",
       "latest": "Último teste",
@@ -728,7 +724,14 @@
     },
     "resize": "Arraste para mudar o tamanho",
     "width": "{{percent}}% da largura",
-    "height_one": "1 linha",
-    "height_other": "{{count}} linhas"
+    "height_one": "{{value}} linha",
+    "height_other": "{{value}} linhas",
+    "hide": "Ocultar",
+    "show": "Mostrar",
+    "hidden_cards_zero": "Nenhum card oculto",
+    "hidden_cards_one": "{{count}} card oculto",
+    "hidden_cards_other": "{{count}} cards ocultos",
+    "hidden_title": "Cards ocultos",
+    "hidden_description": "Estes cards não aparecem no painel. Toque em Mostrar para trazer um de volta ao lugar onde ele estava."
   }
 }

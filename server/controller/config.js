@@ -34,16 +34,17 @@ const configDefaults = {
 }
 
 // The statistics page layout: the cards in order, each with a width in 24ths of the row (3 to 24),
-// a height in rows (1 to 3) and whether it is shown
+// a height in quarters of a row (3 to 12) and whether it is shown. Layouts saved before 1.3 have whole rows instead.
 const validateLayout = (value) => {
     if (value === "default") return value;
     try {
         const layout = JSON.parse(value);
         if (!Array.isArray(layout) || layout.length === 0 || layout.length > 30) return null;
-        const cards = layout.map(({id, size, rows = 1, visible}) => ({id, size, rows, visible}));
+        const cards = layout.map(({id, size, height, rows = 1, visible}) =>
+            ({id, size, height: height === undefined && Number.isInteger(rows) ? rows * 4 : height, visible}));
         const valid = cards.every((card) => typeof card.id === "string" && /^[A-Za-z]{1,30}$/.test(card.id)
             && Number.isInteger(card.size) && card.size >= 3 && card.size <= 24
-            && Number.isInteger(card.rows) && card.rows >= 1 && card.rows <= 3
+            && Number.isInteger(card.height) && card.height >= 3 && card.height <= 12
             && typeof card.visible === "boolean");
         return valid ? JSON.stringify(cards) : null;
     } catch {

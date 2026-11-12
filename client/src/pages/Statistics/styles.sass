@@ -87,13 +87,13 @@
     padding-right: 0
     gap: 1rem
 
-// Card widths (--span, in 24ths) and heights (--rows): on wide screens a 24 column grid, below that
-// each 24th becomes a 4% flex basis so the cards wrap and fill the row
+// Card widths (--span, in 24ths) and heights (--height, in quarters of a row): on wide screens a 24 column grid,
+// below that each 24th becomes a 4% flex basis so the cards wrap and fill the row, and a row is 18rem tall
 .dash-area .dash-card
   flex-basis: calc(var(--span, 6) * 4%)
 
-.dash-area .dash-tall
-  min-height: calc(var(--rows) * 18rem + (var(--rows) - 1) * 2rem)
+.dash-area .dash-sized
+  height: calc(var(--height) * 4.5rem)
 
   > .stats-container > .stats-content
     flex: 1 1 auto
@@ -104,42 +104,64 @@
     max-height: none
 
 @media screen and (max-width: 900px)
+  .dash-area
+    // Every card takes the whole width: pulling the corner only changes the height
+    --dash-fixed-width: 1
+
   .dash-area .dash-card
     flex-basis: 100%
     min-width: 100%
 
+// Customizing: the buttons sit in the header, in place of its icons
+.header-right:has(> .dash-toolbar) > :not(.dash-toolbar)
+  display: none
+
 .dash-toolbar
-  flex: 1 1 100%
-  grid-column: 1 / -1
   display: flex
   align-items: center
-  justify-content: space-between
+  gap: 0.6rem
   flex-wrap: wrap
-  gap: 1rem
-  padding: 1rem 1.25rem
-  border: 1px solid $accent-primary
-  border-radius: 1rem
-  background: var(--glass-bg)
-  backdrop-filter: blur(8px)
-  position: sticky
-  top: 1rem
-  z-index: 20
-
-  p
-    margin: 0
-    color: $subtext
-
-.dash-toolbar-actions
-  display: flex
-  gap: 0.75rem
-  flex-wrap: wrap
+  justify-content: flex-end
 
   .dialog-btn
     margin: 0
+    display: flex
+    align-items: center
+    gap: 0.5rem
+    padding: 0.55rem 0.9rem
+    font-size: 0.95rem
+    white-space: nowrap
 
   .dash-save
     border-color: $accent-primary
     color: $accent-primary
+
+.dash-toolbar-help
+  color: $subtext
+  font-size: 1.15rem
+  margin-right: 0.25rem
+  cursor: help
+
+.dash-toolbar .tooltip-popup
+  left: 50%
+  right: auto
+  width: 20rem
+  transform: translateX(-50%)
+
+.dash-toolbar .tooltip-content
+  white-space: normal
+  line-height: 1.45
+
+// Narrower screens show only the icons (and the number of hidden cards), so the toolbar fits beside the title
+.dash-toolbar-count
+  display: none
+
+@media screen and (max-width: 1350px)
+  .dash-toolbar-label
+    display: none
+
+  .dash-toolbar-count
+    display: inline
 
 // Wide screens: use the full width and fit every card into the viewport height
 @media screen and (min-width: 1900px)
@@ -159,23 +181,25 @@
     flex: 1 1 auto
     display: grid
     grid-template-columns: repeat(24, minmax(0, 1fr))
-    grid-auto-rows: minmax(15rem, 1fr)
+    // Each grid row is a quarter of a card row, so the heights change in small steps. The quarters have a fixed
+    // height, worked out so the default two rows of cards fill the screen (10rem is the header and margins): a taller
+    // card really grows and a shorter one really shrinks, instead of the whole grid stretching to fit the screen
+    grid-auto-rows: max(3rem, calc((100dvh - 10rem - 7 * 1.5rem) / 8))
     gap: 1.5rem
 
     > .statistics-empty
       grid-column: 1 / -1
-
-    > .dash-toolbar
-      grid-row: auto
 
     > .dash-card
       min-width: 0
       min-height: 0
       // The rows share the screen height; without this a chart's own size would make its row grow
       contain: size
+      // The grid rows set the height
+      height: auto
 
       grid-column: span var(--span, 6)
-      grid-row: span var(--rows, 1)
+      grid-row: span var(--height, 4)
 
       > .stats-container > .stats-content
         flex: 1 1 auto
@@ -187,20 +211,14 @@
         min-height: 0
         max-height: none
 
-  .statistic-area.dash-area-editing
-    grid-template-rows: auto
-    grid-auto-rows: minmax(15rem, auto)
-
-    > .dash-toolbar
-      align-self: start
-
-// Notebooks (telas de 1000 a 1899px de largura e de 830 a 1100px de altura): o painel também cabe
-// inteiro na tela, sem rolar. Mesma grade das telas largas, com espaços e letras mais compactos.
+// Notebooks (telas de 1000 a 1899px de largura e de 830 a 1100px de altura): o painel ocupa a tela inteira
+// quando cabe, com espaços e letras mais compactos. Cada fileira tem uma altura mínima legível: quando os cards
+// não cabem nela, a página rola em vez de espremer o conteúdo.
 @media screen and (min-width: 1000px) and (max-width: 1899.98px) and (min-height: 830px) and (max-height: 1100px)
   #root:has(> main > .statistic-area)
     display: flex
     flex-direction: column
-    height: 100dvh
+    min-height: 100dvh
 
   main:has(> .statistic-area)
     flex: 1 1 auto
@@ -214,14 +232,17 @@
     padding-top: 0.5rem
     margin-bottom: 1rem
 
-  .statistic-area:not(.statistic-loading):not(.dash-area-editing)
+  .statistic-area:not(.statistic-loading)
     flex: 1 1 auto
     min-height: 0
     display: grid
     // Três cartões por fileira, todos da mesma largura (as larguras do painel são pensadas para telas grandes)
     grid-template-columns: repeat(3, minmax(0, 1fr))
-    grid-auto-rows: minmax(0, 1fr)
+    // Quartos de fileira com altura fixa, como nas telas largas: uma fileira padrão tem 15,5rem e a página rola
+    grid-auto-rows: 3.2rem
     gap: 0.9rem
+    // As larguras são fixas aqui: puxar o canto só muda a altura
+    --dash-fixed-width: 1
 
     > .statistics-empty
       grid-column: 1 / -1
@@ -230,8 +251,9 @@
       min-width: 0
       min-height: 0
       contain: size
+      height: auto
       grid-column: auto
-      grid-row: auto
+      grid-row: span var(--height, 4)
 
       > .stats-container
         min-width: 0

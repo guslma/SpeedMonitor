@@ -26,12 +26,15 @@ import ConnectionChart from "@/pages/Statistics/charts/ConnectionChart";
 import {ConnectionDetails} from "@/pages/Statistics/charts/ConnectionChart/ConnectionDetails";
 import PlanDialog from "@/common/components/PlanDialog";
 import DashboardCard from "@/pages/Statistics/components/DashboardCard";
+import HiddenCardsDialog from "@/pages/Statistics/components/HiddenCardsDialog";
 import {DEFAULT_LAYOUT, isDefaultLayout, moveCard, parseLayout} from "@/pages/Statistics/layout";
 import {ConfigContext} from "@/common/contexts/Config";
 import {ToastNotificationContext} from "@/common/contexts/ToastNotification";
 import {patchRequest} from "@/common/utils/RequestUtil";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faExclamationTriangle, faRotateLeft} from "@fortawesome/free-solid-svg-icons";
+import {faCheck, faCircleInfo, faExclamationTriangle, faEyeSlash, faRotateLeft} from "@fortawesome/free-solid-svg-icons";
+import {createPortal} from "react-dom";
+import HintTooltip from "@/common/components/Tooltip";
 import i18n, {t} from "i18next";
 import "./styles.sass";
 
@@ -95,6 +98,7 @@ export const Statistics = () => {
     const [editing, setEditing] = useState(false);
     const [draft, setDraft] = useState(null);
     const [dragIndex, setDragIndex] = useState(null);
+    const [showHidden, setShowHidden] = useState(false);
     const savedLayout = parseLayout(config.dashboardLayout);
     const layout = editing && draft ? draft : savedLayout;
 
@@ -112,6 +116,7 @@ export const Statistics = () => {
 
     const changeCard = (index, changes) => setDraft((cards) => cards.map((card, i) => i === index ? {...card, ...changes} : card));
     const move = (from, to) => setDraft((cards) => moveCard(cards, from, to));
+    const hiddenCount = layout.filter((card) => !card.visible).length;
 
     const onDragStart = (event, index) => {
         setDragIndex(index);
@@ -252,31 +257,44 @@ export const Statistics = () => {
         avgUpload: <AverageChart title={t("statistics.values.up")} data={deferredStatistics.upload} onClick={() => setExpandedChart('avgUpload')}/>
     };
 
+    // While customizing, the buttons take the place of the header icons, so the cards stay where they really are
+    const toolbar = editing && (
+        <div className="dash-toolbar">
+            <HintTooltip content={t("dashboard.help")} position="bottom">
+                <FontAwesomeIcon icon={faCircleInfo} className="dash-toolbar-help"/>
+            </HintTooltip>
+            <button className="dialog-btn" disabled={hiddenCount === 0} onClick={() => setShowHidden(true)}
+                    title={t("dashboard.hidden_title")}>
+                <FontAwesomeIcon icon={faEyeSlash}/> <span className="dash-toolbar-label">{t("dashboard.hidden_cards", {count: hiddenCount})}</span>
+                <span className="dash-toolbar-count">{hiddenCount}</span>
+            </button>
+            <button className="dialog-btn" onClick={() => setDraft(DEFAULT_LAYOUT.map((card) => ({...card})))}
+                    title={t("dashboard.reset")}>
+                <FontAwesomeIcon icon={faRotateLeft}/> <span className="dash-toolbar-label">{t("dashboard.reset")}</span>
+            </button>
+            <button className="dialog-btn" onClick={() => setEditing(false)}>{t("dashboard.cancel")}</button>
+            <button className="dialog-btn dash-save" onClick={saveLayout}>
+                <FontAwesomeIcon icon={faCheck}/> <span>{t("dashboard.save")}</span>
+            </button>
+        </div>
+    );
+    const headerSlot = editing ? document.querySelector("header .header-right") : null;
+
     return (
         <div className={`statistic-area dash-area${isStale ? ' statistic-stale' : ''}${editing ? ' dash-area-editing' : ''}`}>
-            {editing && (
-                <div className="dash-toolbar">
-                    <p>{t("dashboard.help")}</p>
-                    <div className="dash-toolbar-actions">
-                        <button className="dialog-btn" onClick={() => setDraft(DEFAULT_LAYOUT.map((card) => ({...card})))}>
-                            <FontAwesomeIcon icon={faRotateLeft}/> <span>{t("dashboard.reset")}</span>
-                        </button>
-                        <button className="dialog-btn" onClick={() => setEditing(false)}>{t("dashboard.cancel")}</button>
-                        <button className="dialog-btn dash-save" onClick={saveLayout}>
-                            <FontAwesomeIcon icon={faCheck}/> <span>{t("dashboard.save")}</span>
-                        </button>
-                    </div>
-                </div>
-            )}
+            {toolbar && (headerSlot ? createPortal(toolbar, headerSlot) : toolbar)}
 
             {layout.map((card, index) => (editing || card.id !== "connection" || connection) && (
-                <DashboardCard key={card.id} card={card} index={index} count={layout.length} editing={editing}
-                               dragging={editing && dragIndex === index} onChange={changeCard} onMove={move}
+                <DashboardCard key={card.id} card={card} index={index} editing={editing}
+                               dragging={editing && dragIndex === index} onChange={changeCard}
                                onDragStart={onDragStart} onDragOver={onDragOver}
                                onDrop={(event) => event.preventDefault()} onDragEnd={() => setDragIndex(null)}>
                     {cards[card.id]}
                 </DashboardCard>
             ))}
+
+            <HiddenCardsDialog open={editing && showHidden} onClose={() => setShowHidden(false)} layout={layout}
+                               onShow={(index) => changeCard(index, {visible: true})}/>
 
             <ChartModal 
                 isOpen={!!expandedChart} 

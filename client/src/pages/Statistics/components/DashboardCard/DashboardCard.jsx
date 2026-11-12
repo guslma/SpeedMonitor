@@ -1,59 +1,103 @@
-import {useRef, useState} from "react";
-import {t} from "i18next";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
+import i18n, {t} from "i18next";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronLeft, faChevronRight, faEye, faEyeSlash, faGripVertical, faUpRightAndDownLeftFromCenter} from "@fortawesome/free-solid-svg-icons";
-import {clamp, MAX_ROWS, MAX_SPAN, MIN_SPAN} from "@/pages/Statistics/layout";
+import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import {clamp, MAX_HEIGHT, MAX_SPAN, MIN_HEIGHT, MIN_SCALE, MIN_SPAN, ROW} from "@/pages/Statistics/layout";
 import "./styles.sass";
 
-const GAP = 24;
-
-export const DashboardCard = ({card, index, count, editing, dragging, onChange, onMove, onDragStart, onDragOver, onDrop, onDragEnd, children}) => {
+export const DashboardCard = ({card, index, editing, dragging, onChange, onDragStart, onDragOver, onDrop, onDragEnd, children}) => {
     const ref = useRef(null);
     const resize = useRef(null);
-    const [resizing, setResizing] = useState(false);
+    const [resizing, setResizing] = useState(null);
+    // When the text does not fit the chosen height, it first shrinks a little (down to MIN_SCALE) and only then
+    // the card grows by the quarters this screen needs (fit, 0 when the chosen height is enough)
+    const [scale, setScale] = useState(1);
+    const [fit, setFit] = useState(0);
+    const [screen, setScreen] = useState(0);
+    const shown = Math.max(card.height, fit);
 
-    if (!card.visible && !editing) return null;
+    useEffect(() => {
+        const onResize = () => setScreen((count) => count + 1);
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
 
-    // Dragging the corner: the width snaps to 24ths of the row and the height to whole rows
+    // Measure again, before painting, whenever the chosen height or the screen changes
+    useLayoutEffect(() => {
+        setScale(1);
+        setFit(0);
+    }, [card.height, card.size, card.visible, editing, screen]);
+    useLayoutEffect(() => {
+        const content = ref.current?.querySelector(":scope > .stats-container > .stats-content");
+        if (!content || content.scrollHeight - content.clientHeight <= 1) return;
+        if (scale > MIN_SCALE) {
+            const style = getComputedStyle(content);
+            const padding = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
+            const room = content.clientHeight - padding;
+            const next = Math.floor(scale * room / (content.scrollHeight - padding) * 100) / 100;
+            setScale(Math.max(MIN_SCALE, Math.min(next, scale - 0.02)));
+        } else if (shown < MAX_HEIGHT) {
+            // Even the smallest text does not fit: the card grows a quarter and the text tries its normal size again
+            setScale(1);
+            setFit(shown + 1);
+        }
+    });
+
+    // Hidden cards stay out of the dashboard, also while customizing, so it shows how it will look
+    if (!card.visible) return null;
+
+    // Pulling the corner: the width snaps to 24ths of the row and the height to quarters of a row
     const startResize = (event) => {
         event.preventDefault();
         event.stopPropagation();
         const parent = ref.current.parentElement;
+        const style = getComputedStyle(parent);
         const area = parent.getBoundingClientRect();
         const box = ref.current.getBoundingClientRect();
-        // Wide screens use a 24 column grid; below that each 24th is a 4% flex basis
-        const grid = getComputedStyle(parent).display === "grid";
+        const columnGap = parseFloat(style.columnGap) || 0;
+        const rowGap = parseFloat(style.rowGap) || 0;
+        const grid = style.display === "grid";
+        // Notebooks and phones give every card the same width: there only the height changes
+        const fixedWidth = style.getPropertyValue("--dash-fixed-width").trim() === "1";
         resize.current = {
-            x: event.clientX, y: event.clientY, size: card.size, rows: card.rows,
-            column: grid ? (area.width + GAP) / 24 : area.width * 0.04,
-            row: (box.height + GAP) / card.rows
+            x: event.clientX, y: event.clientY, size: card.size, height: shown, fixedWidth,
+            // Wide screens use a 24 column grid; below that each 24th is a 4% flex basis
+            column: grid ? (area.width + columnGap) / 24 : area.width * 0.04,
+            // In the grid each quarter of a row is a grid row (gaps included); elsewhere the card height is split evenly
+            unit: grid ? (box.height + rowGap) / shown : box.height / shown
         };
         event.currentTarget.setPointerCapture(event.pointerId);
-        setResizing(true);
+        setResizing(fixedWidth ? "height" : "both");
     };
 
     const moveResize = (event) => {
         const start = resize.current;
         if (!start) return;
-        const size = clamp(Math.round(start.size + (event.clientX - start.x) / start.column), MIN_SPAN, MAX_SPAN);
-        const rows = clamp(Math.round(start.rows + (event.clientY - start.y) / start.row), 1, MAX_ROWS);
-        if (size !== card.size || rows !== card.rows) onChange(index, {size, rows});
+        const size = start.fixedWidth ? card.size
+            : clamp(Math.round(start.size + (event.clientX - start.x) / start.column), MIN_SPAN, MAX_SPAN);
+        const height = clamp(Math.round(start.height + (event.clientY - start.y) / start.unit), MIN_HEIGHT, MAX_HEIGHT);
+        if (size !== card.size || height !== card.height) onChange(index, {size, height});
     };
 
     const endResize = () => {
+        // A card pulled smaller than its text stops at the smallest height that still shows everything
+        if (resize.current && fit > card.height) onChange(index, {size: card.size, height: fit});
         resize.current = null;
-        setResizing(false);
+        setResizing(null);
     };
 
+    const rows = shown / ROW;
+    const heightText = t("dashboard.height", {count: rows, value: rows.toLocaleString(i18n.language)});
+    const widthText = t("dashboard.width", {percent: Math.round(card.size / 24 * 100)});
+
     const classes = ["dash-card"];
-    if (card.rows > 1) classes.push("dash-tall");
+    if (shown !== ROW) classes.push("dash-sized");
     if (editing) classes.push("dash-editing");
-    if (!card.visible) classes.push("dash-hidden");
     if (dragging) classes.push("dash-dragging");
     if (resizing) classes.push("dash-resizing");
 
     return (
-        <div ref={ref} className={classes.join(" ")} style={{"--span": card.size, "--rows": card.rows}}
+        <div ref={ref} className={classes.join(" ")} style={{"--span": card.size, "--height": shown, "--dash-zoom": scale}}
              draggable={editing && !resizing}
              onDragStart={editing ? (event) => onDragStart(event, index) : undefined}
              onDragOver={editing ? (event) => onDragOver(event, index) : undefined}
@@ -61,30 +105,16 @@ export const DashboardCard = ({card, index, count, editing, dragging, onChange, 
              onDragEnd={editing ? onDragEnd : undefined}>
             {children}
             {editing && (
-                <div className="dash-edit">
-                    <span className="dash-edit-name">
-                        <FontAwesomeIcon icon={faGripVertical}/> {t(`dashboard.cards.${card.id}`)}
-                    </span>
-                    <span className="dash-edit-size">
-                        {t("dashboard.width", {percent: Math.round(card.size / 24 * 100)})} · {t("dashboard.height", {count: card.rows})}
-                    </span>
-                    <div className="dash-edit-controls">
-                        <button title={t("dashboard.move_left")} disabled={index === 0} onClick={() => onMove(index, index - 1)}>
-                            <FontAwesomeIcon icon={faChevronLeft}/>
-                        </button>
-                        <button className="dash-edit-visibility" onClick={() => onChange(index, {visible: !card.visible})}>
-                            <FontAwesomeIcon icon={card.visible ? faEye : faEyeSlash}/>
-                            <span>{t(card.visible ? "dashboard.visible" : "dashboard.hidden")}</span>
-                        </button>
-                        <button title={t("dashboard.move_right")} disabled={index === count - 1} onClick={() => onMove(index, index + 1)}>
-                            <FontAwesomeIcon icon={faChevronRight}/>
-                        </button>
-                    </div>
+                <>
+                    <button className="dash-hide" title={t("dashboard.hide")} aria-label={t("dashboard.hide")}
+                            onClick={() => onChange(index, {visible: false})}>
+                        <FontAwesomeIcon icon={faEye} className="dash-hide-eye"/>
+                        <FontAwesomeIcon icon={faEyeSlash} className="dash-hide-slash"/>
+                    </button>
+                    {resizing && <span className="dash-size">{resizing === "height" ? heightText : `${widthText} · ${heightText}`}</span>}
                     <div className="dash-resize" title={t("dashboard.resize")}
-                         onPointerDown={startResize} onPointerMove={moveResize} onPointerUp={endResize} onPointerCancel={endResize}>
-                        <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter}/>
-                    </div>
-                </div>
+                         onPointerDown={startResize} onPointerMove={moveResize} onPointerUp={endResize} onPointerCancel={endResize}/>
+                </>
             )}
         </div>
     );

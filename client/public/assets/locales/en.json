@@ -706,14 +706,10 @@
   },
   "dashboard": {
     "customize": "Customize dashboard",
-    "help": "Drag the cards or use the arrows to change the order. Pull a card's corner to change its width and height. Hide what you don't want to see.",
+    "help": "Drag the cards to change the order and pull the bottom corner to resize them. Choose the eye to hide a card: it leaves the dashboard and goes to \"Hidden cards\".",
     "reset": "Restore default",
     "cancel": "Cancel",
     "save": "Save",
-    "move_left": "Move back",
-    "move_right": "Move forward",
-    "visible": "Shown",
-    "hidden": "Hidden",
     "cards": {
       "overview": "Overview",
       "latest": "Latest test",
@@ -728,7 +724,14 @@
     },
     "resize": "Drag to resize",
     "width": "{{percent}}% wide",
-    "height_one": "1 row",
-    "height_other": "{{count}} rows"
+    "height_one": "{{value}} row",
+    "height_other": "{{value}} rows",
+    "hide": "Hide",
+    "show": "Show",
+    "hidden_cards_zero": "No hidden cards",
+    "hidden_cards_one": "{{count}} hidden card",
+    "hidden_cards_other": "{{count}} hidden cards",
+    "hidden_title": "Hidden cards",
+    "hidden_description": "These cards are not on the dashboard. Choose Show to bring one back to where it was."
   }
 }
