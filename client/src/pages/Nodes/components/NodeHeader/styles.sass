@@ -12,3 +12,16 @@
   font-size: 38pt
   font-weight: 700
   margin: 0
+
+// Phones: logo and title shrink with the screen, so "SpeedMonitor" fits in one line
+@media screen and (max-width: 600px)
+  .node-header
+    gap: 0.6rem
+    max-width: calc(100vw - 2rem)
+
+  .node-header img
+    width: clamp(2.6rem, 12vw, 4rem)
+    height: clamp(2.6rem, 12vw, 4rem)
+
+  .node-header h1
+    font-size: clamp(1.6rem, 9vw, 2.4rem)

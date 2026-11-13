@@ -42,8 +42,12 @@ import {createPortal} from "react-dom";
 import HintTooltip from "@/common/components/Tooltip";
 import i18n, {t} from "i18next";
 
-const DEVICE_ICONS = {phone: faMobileScreen, laptop: faLaptop, desktop: faDesktop};
 import "./styles.sass";
+
+// Chip in the customize bar that names the kind of screen being edited. Hidden for now: each kind of screen still
+// keeps its own layout, the help tooltip says so.
+const SHOW_DEVICE_CHIP = false;
+const DEVICE_ICONS = {phone: faMobileScreen, laptop: faLaptop, desktop: faDesktop};
 
 ChartJS.register(ArcElement, Tooltip, CategoryScale, LinearScale, PointElement, LineElement, Title, Legend, BarElement, RadialLinearScale, Filler);
 
@@ -292,12 +296,12 @@ export const Statistics = () => {
             <HintTooltip content={t("dashboard.help")} position="bottom">
                 <FontAwesomeIcon icon={faCircleInfo} className="dash-toolbar-help"/>
             </HintTooltip>
-            <HintTooltip content={t("dashboard.device_help." + (editDevice || device))} position="bottom">
+            {SHOW_DEVICE_CHIP && <HintTooltip content={t("dashboard.device_help." + (editDevice || device))} position="bottom">
                 <span className="dash-toolbar-device">
                     <FontAwesomeIcon icon={DEVICE_ICONS[editDevice || device]}/>
                     <span className="dash-toolbar-label">{t("dashboard.device." + (editDevice || device))}</span>
                 </span>
-            </HintTooltip>
+            </HintTooltip>}
             <button className="dialog-btn" disabled={hiddenCount === 0} onClick={() => setShowHidden(true)}
                     title={t("dashboard.hidden_title")}>
                 <FontAwesomeIcon icon={faEyeSlash}/> <span className="dash-toolbar-label">{t("dashboard.hidden_cards", {count: hiddenCount})}</span>

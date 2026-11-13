@@ -713,7 +713,7 @@
   },
   "dashboard": {
     "customize": "Customize dashboard",
-    "help": "Drag the cards to change their order (on a phone, touch and hold before dragging) and pull the bottom corner to change their size. Tap the eye to hide a card: it leaves the dashboard and goes to \"Hidden cards\".",
+    "help": "Drag the cards to change their order (on a phone, touch and hold before dragging) and pull the bottom corner to change their size. Tap the eye to hide a card: it leaves the dashboard and goes to \"Hidden cards\". Phones, laptops and computers each keep their own layout: what you change here only applies to this kind of screen.",
     "reset": "Restore default",
     "cancel": "Cancel",
     "save": "Save",

@@ -713,7 +713,7 @@
   },
   "dashboard": {
     "customize": "Personalizar painel",
-    "help": "Arraste os cards para mudar a ordem (no celular, toque e segure antes de arrastar) e puxe o canto de baixo para mudar o tamanho. Toque no olho para ocultar um card: ele sai do painel e fica em \"Cards ocultos\".",
+    "help": "Arraste os cards para mudar a ordem (no celular, toque e segure antes de arrastar) e puxe o canto de baixo para mudar o tamanho. Toque no olho para ocultar um card: ele sai do painel e fica em \"Cards ocultos\". Celular, notebook e computador guardam cada um o seu layout: o que você muda aqui vale só para este tipo de tela.",
     "reset": "Restaurar padrão",
     "cancel": "Cancelar",
     "save": "Salvar",
