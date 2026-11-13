@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import "./styles.sass";
 
-export const ChartModal = ({ isOpen, onClose, isChart = false, children }) => {
+export const ChartModal = ({ isOpen, onClose, isChart = false, wide = false, children }) => {
     const handleEscape = useCallback((e) => {
         if (e.key === "Escape") {
             onClose();
@@ -31,7 +31,7 @@ export const ChartModal = ({ isOpen, onClose, isChart = false, children }) => {
 
     return (
         <div className="chart-modal-backdrop" onClick={handleBackdropClick}>
-            <div className={`chart-modal-content${isChart ? ' modal-chart' : ''}`}>
+            <div className={`chart-modal-content${isChart ? ' modal-chart' : ''}${wide ? ' modal-wide' : ''}`}>
                 <button className="chart-modal-close" onClick={onClose}>
                     <FontAwesomeIcon icon={faXmark} />
                 </button>

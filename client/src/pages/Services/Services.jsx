@@ -1,8 +1,7 @@
 import {useContext, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faArrowsRotate, faPen, faPlus, faTrash, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {faArrowsRotate, faPen, faPlus, faTrash, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {jsonRequest, patchRequest, postRequest} from "@/common/utils/RequestUtil";
 import {ConfigContext} from "@/common/contexts/Config";
 import {ToastNotificationContext} from "@/common/contexts/ToastNotification";
@@ -45,8 +44,8 @@ const HourBars = ({hours}) => (
     </div>
 );
 
+// Opened from the dashboard card, in a modal
 export const Services = () => {
-    const navigate = useNavigate();
     const [config, reloadConfig] = useContext(ConfigContext);
     const updateToast = useContext(ToastNotificationContext);
     const [data, setData] = useState(null);
@@ -93,10 +92,12 @@ export const Services = () => {
 
     return (
         <div className="services-page">
+            <div className="services-intro">
+                <h1>{t("services.title")}</h1>
+                <p>{t("services.description")}</p>
+            </div>
+
             <div className="services-toolbar">
-                <button className="dialog-btn" onClick={() => navigate("/statistics")}>
-                    <FontAwesomeIcon icon={faArrowLeft}/> {t("map.back")}
-                </button>
                 {canEdit && data && !editing && <div className="services-actions">
                     <button className="dialog-btn" onClick={checkNow} disabled={checking || !data.monitor}>
                         <FontAwesomeIcon icon={faArrowsRotate} spin={checking}/> {t("services.check_now")}
@@ -105,11 +106,6 @@ export const Services = () => {
                         <FontAwesomeIcon icon={faPen}/> {t("services.edit.button")}
                     </button>
                 </div>}
-            </div>
-
-            <div className="services-intro">
-                <h1>{t("services.title")}</h1>
-                <p>{t("services.description")}</p>
             </div>
 
             {data && !data.monitor && (

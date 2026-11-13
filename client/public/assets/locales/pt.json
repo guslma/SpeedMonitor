@@ -727,6 +727,7 @@
       "download": "Gráfico de download",
       "upload": "Gráfico de upload",
       "ping": "Gráfico de ping",
+      "combined": "Velocidade e ping",
       "hourly": "Velocidade por horário",
       "services": "Serviços",
       "map": "Mapa da conexão",
@@ -801,7 +802,6 @@
   },
   "map": {
     "title": "Mapa da conexão",
-    "back": "Voltar ao painel",
     "home": "Sua conexão",
     "description": "Para onde vai a sua internet a partir de {{city}}: de onde respondem os serviços verificados, os servidores dos testes de velocidade e os seus outros servidores.",
     "description_unknown": "Para onde vai a sua internet: os serviços verificados, os servidores dos testes de velocidade e os seus outros servidores.",
@@ -834,7 +834,6 @@
     "zoom_out": "Afastar",
     "zoom_fit": "Voltar para a sua região",
     "attacks": {
-      "toggle": "Ataques no mundo",
       "title": "Ataques no mundo hoje",
       "description": "Pontos vermelhos: de onde vêm os ataques registrados hoje por sensores espalhados pela internet. Não são ataques contra a sua conexão.",
       "countries": "Países de onde mais vêm",
@@ -851,9 +850,6 @@
       "pending_one": "Ainda localizando a cidade de {{count}} endereço: o mapa se completa sozinho em alguns minutos.",
       "pending_other": "Ainda localizando a cidade de {{count}} endereços: o mapa se completa sozinho em alguns minutos.",
       "card_top": "A maior parte vem de: {{country}}"
-    },
-    "modes": {
-      "connection": "Sua conexão"
     },
     "located": {
       "name": "pelo nome do servidor ({{code}})",

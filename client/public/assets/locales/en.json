@@ -727,6 +727,7 @@
       "download": "Download chart",
       "upload": "Upload chart",
       "ping": "Ping chart",
+      "combined": "Speed and ping",
       "hourly": "Speed by hour",
       "services": "Services",
       "map": "Connection map",
@@ -801,7 +802,6 @@
   },
   "map": {
     "title": "Connection map",
-    "back": "Back to the dashboard",
     "home": "Your connection",
     "description": "Where your internet goes from {{city}}: where the checked services answer from, the speed test servers and your other servers.",
     "description_unknown": "Where your internet goes: the checked services, the speed test servers and your other servers.",
@@ -834,7 +834,6 @@
     "zoom_out": "Zoom out",
     "zoom_fit": "Back to your area",
     "attacks": {
-      "toggle": "Attacks worldwide",
       "title": "Attacks worldwide today",
       "description": "Red spots: where the attacks recorded today by sensors across the internet come from. They are not attacks against your connection.",
       "countries": "Countries they come from most",
@@ -851,9 +850,6 @@
       "pending_one": "Still placing {{count}} address on its city: the map fills in by itself in a few minutes.",
       "pending_other": "Still placing {{count}} addresses on their cities: the map fills in by itself in a few minutes.",
       "card_top": "Most come from: {{country}}"
-    },
-    "modes": {
-      "connection": "Your connection"
     },
     "located": {
       "name": "from the server name ({{code}})",

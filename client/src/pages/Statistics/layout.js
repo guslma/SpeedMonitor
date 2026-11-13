@@ -15,6 +15,7 @@ export const DEFAULT_LAYOUT = [
     {id: "connection", size: 4, height: 4, visible: true},
     {id: "avgDownload", size: 3, height: 4, visible: true},
     {id: "avgUpload", size: 3, height: 4, visible: true},
+    {id: "combined", size: 24, height: 4, visible: true},
     {id: "download", size: 6, height: 4, visible: true},
     {id: "upload", size: 6, height: 4, visible: true},
     {id: "ping", size: 6, height: 4, visible: true},

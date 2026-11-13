@@ -1,9 +1,9 @@
 @use "@/common/styles/colors" as *
 
-.report-page
-  width: min(60rem, calc(100% - 2rem))
-  margin: 1.5rem auto 3rem
+.report-page.connection-details, .report-page
+  width: auto
   color: $white
+  text-align: left
 
   h1
     font-size: 1.6rem
@@ -14,7 +14,8 @@
 
 .report-toolbar
   display: flex
-  justify-content: space-between
+  justify-content: flex-start
+  padding-right: 2.5rem
   gap: 0.75rem
   margin-bottom: 1.5rem
 
@@ -108,12 +109,41 @@
   opacity: 0.6
   transition: opacity 0.2s ease
 
-// Print only the report, in black on white
+// Print only the report, in black on white: everything else on the screen (header, dashboard, the modal frame) is
+// left out, and the report flows over as many pages as it needs
 @media print
-  body
+  // On screen html and body are one screen tall and the body scrolls; on paper that would cut the report to the
+  // part that was scrolled into view
+  html, body
+    height: auto !important
+    overflow: visible !important
     background: #fff !important
 
-  header, .pagination, .report-toolbar, .report-period, .back-to-top-button
+  body::before
+    display: none !important
+
+  body:has(.report-page) *:not(:has(.report-page)):not(.report-page):not(.report-page *)
+    display: none !important
+
+  body:has(.report-page) *:has(.report-page)
+    display: block !important
+    position: static !important
+    width: auto !important
+    height: auto !important
+    min-height: 0 !important
+    max-width: none !important
+    max-height: none !important
+    overflow: visible !important
+    padding: 0 !important
+    margin: 0 !important
+    border: none !important
+    box-shadow: none !important
+    background: none !important
+    backdrop-filter: none !important
+    animation: none !important
+    transform: none !important
+
+  .report-toolbar, .report-period
     display: none !important
 
   .report-page
@@ -128,6 +158,10 @@
 
     .connection-table th
       position: static
+
+    // A heading never stays alone at the bottom of a page
+    h1, h3
+      break-after: avoid
 
     table
       page-break-inside: auto

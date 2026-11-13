@@ -1,25 +1,12 @@
 @use "@/common/styles/colors" as *
 
 .map-page
-  width: min(80rem, calc(100% - 2rem))
-  margin: 1.5rem auto 3rem
   color: $white
-
-.map-toolbar
-  display: flex
-  justify-content: space-between
-  flex-wrap: wrap
-  gap: 0.75rem
-  margin-bottom: 1rem
-
-  .dialog-btn
-    margin: 0
-    display: inline-flex
-    align-items: center
-    gap: 0.5rem
+  text-align: left
 
 .map-intro
   margin-bottom: 1.25rem
+  padding-right: 2.5rem
 
   h1
     font-size: 1.6rem
@@ -40,6 +27,7 @@
   align-items: start
 
 .map-globe
+  min-width: 0
   display: flex
   flex-direction: column
   gap: 0.75rem
@@ -49,7 +37,7 @@
   background: var(--glass-bg)
 
   .globe
-    height: clamp(22rem, calc(100dvh - 18rem), 44rem)
+    height: clamp(20rem, calc(90dvh - 16rem), 40rem)
     border-radius: 0.75rem
     overflow: hidden
 
@@ -143,47 +131,10 @@
 
 @media screen and (max-width: 900px)
   .map-layout
-    grid-template-columns: 1fr
+    grid-template-columns: minmax(0, 1fr)
 
   .map-globe .globe
     height: min(90vw, 26rem)
-
-// The two maps, side by side like tabs
-.map-modes
-  display: inline-flex
-  padding: 0.25rem
-  gap: 0.25rem
-  border: 1px solid $light-gray
-  border-radius: 0.8rem
-  background: var(--glass-bg)
-
-.map-mode
-  display: inline-flex
-  align-items: center
-  gap: 0.5rem
-  padding: 0.5rem 0.9rem
-  border: 1px solid transparent
-  border-radius: 0.6rem
-  background: none
-  color: $subtext
-  font: inherit
-  font-size: 0.95rem
-  cursor: pointer
-
-  &:hover
-    color: $white
-
-.map-mode-active
-  background: $darker-gray
-  border-color: $accent-primary
-  color: $accent-primary
-
-  &:hover
-    color: $accent-primary
-
-.map-mode-attacks, .map-mode-attacks:hover
-  border-color: $accent-danger
-  color: $accent-danger
 
 .map-legend .map-legend-estimate
   border: 2px solid $accent-primary

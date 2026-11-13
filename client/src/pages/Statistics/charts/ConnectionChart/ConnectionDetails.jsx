@@ -1,11 +1,10 @@
 import {useContext} from "react";
 import {t} from "i18next";
-import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileLines, faSliders} from "@fortawesome/free-solid-svg-icons";
 import {PreferencesContext} from "@/common/contexts/Preferences";
 import {formatDateTime} from "@/common/utils/FormatUtil";
-import {availabilityColor, causeLabel, formatDateParam, formatDuration, monthLabel} from "@/common/utils/ConnectionUtil";
+import {availabilityColor, causeLabel, formatDuration, monthLabel} from "@/common/utils/ConnectionUtil";
 
 export const PlanResult = ({result, plan}) => {
     if (!result) return <span className="connection-muted">-</span>;
@@ -70,12 +69,11 @@ export const MonthTable = ({plan}) => (
     </table>
 );
 
-export const ConnectionDetails = ({summary, dateRange, onConfigure}) => {
+export const ConnectionDetails = ({summary, onConfigure}) => {
     const [preferences] = useContext(PreferencesContext);
-    const navigate = useNavigate();
     const plan = summary.plan;
 
-    const openReport = () => navigate(`/report?from=${formatDateParam(dateRange.from)}&to=${formatDateParam(dateRange.to)}`);
+    const openReport = () => window.dispatchEvent(new Event("speedmonitor:report"));
 
     return (
         <div className="connection-details">

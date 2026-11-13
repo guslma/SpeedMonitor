@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 import StatisticContainer from "@/pages/Statistics/components/StatisticContainer";
 import {jsonRequest} from "@/common/utils/RequestUtil";
@@ -16,8 +15,7 @@ const problemText = (service) => {
 
 // Is WhatsApp, YouTube... answering? The ones with a problem first (down, slow, slower than usual), then a chip
 // for each of the others
-export const ServicesCard = () => {
-    const navigate = useNavigate();
+export const ServicesCard = ({onClick}) => {
     const [data, setData] = useState(null);
 
     useEffect(() => {
@@ -35,7 +33,7 @@ export const ServicesCard = () => {
             : describeAll(services);
 
     return (
-        <StatisticContainer title={t("dashboard.cards.services")} onClick={() => navigate("/services")}>
+        <StatisticContainer title={t("dashboard.cards.services")} onClick={onClick}>
             <div className="services-card">
                 <p className={"services-card-summary services-card-" + overall.tone}>{overall.text}</p>
                 {data?.monitor && problems.length > 0 && (

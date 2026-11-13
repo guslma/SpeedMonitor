@@ -26,6 +26,10 @@ import ConnectionChart from "@/pages/Statistics/charts/ConnectionChart";
 import ServicesCard from "@/pages/Statistics/charts/ServicesCard";
 import MapCard from "@/pages/Statistics/charts/MapCard";
 import AttacksCard from "@/pages/Statistics/charts/AttacksCard";
+import CombinedChart from "@/pages/Statistics/charts/CombinedChart";
+import Services from "@/pages/Services";
+import MapPage from "@/pages/Map";
+import Report from "@/pages/Report";
 import {ConnectionDetails} from "@/pages/Statistics/charts/ConnectionChart/ConnectionDetails";
 import PlanDialog from "@/common/components/PlanDialog";
 import DashboardCard from "@/pages/Statistics/components/DashboardCard";
@@ -142,6 +146,13 @@ export const Statistics = () => {
         return () => window.removeEventListener("speedmonitor:customize", start);
     }, [savedValue, device, config.dashboardLayout]);
 
+    // "Gerar relatório" (header or connection details) opens the report in the modal, in place of what was open
+    useEffect(() => {
+        const open = () => setExpandedChart("report");
+        window.addEventListener("speedmonitor:report", open);
+        return () => window.removeEventListener("speedmonitor:report", open);
+    }, []);
+
     const changeCard = (index, changes) => setDraft((cards) => cards.map((card, i) => i === index ? {...card, ...changes} : card));
     const move = (from, to) => setDraft((cards) => moveCard(cards, from, to));
     const hiddenCount = layout.filter((card) => !card.visible).length;
@@ -251,7 +262,7 @@ export const Statistics = () => {
             case 'overview':
                 return <OverviewChart tests={deferredStatistics.tests} time={deferredStatistics.time} dateRange={dateRange}/>;
             case 'connection':
-                return connection && <ConnectionDetails summary={connection} dateRange={dateRange}
+                return connection && <ConnectionDetails summary={connection}
                                                         onConfigure={() => setShowPlanDialog(true)}/>;
             case 'latest':
                 return <LatestTestChart test={latestTest} expanded/>;
@@ -269,6 +280,16 @@ export const Statistics = () => {
                 return <AverageChart title={t("statistics.values.down")} data={deferredStatistics.download}/>;
             case 'avgUpload':
                 return <AverageChart title={t("statistics.values.up")} data={deferredStatistics.upload}/>;
+            case 'combined':
+                return <CombinedChart labels={deferredStatistics.labels} data={deferredStatistics.data} failed={deferredStatistics.failed} errors={deferredStatistics.errors}/>;
+            case 'services':
+                return <Services/>;
+            case 'map':
+                return <MapPage mode="connection"/>;
+            case 'attacks':
+                return <MapPage mode="attacks"/>;
+            case 'report':
+                return <Report from={formatDateParam(dateRange.from)} to={formatDateParam(dateRange.to)}/>;
             default:
                 return null;
         }
@@ -285,9 +306,10 @@ export const Statistics = () => {
         hourly: <HourlyChart hourlyAverages={deferredStatistics.hourlyAverages} onClick={() => setExpandedChart('hourly')}/>,
         avgDownload: <AverageChart title={t("statistics.values.down")} data={deferredStatistics.download} onClick={() => setExpandedChart('avgDownload')}/>,
         avgUpload: <AverageChart title={t("statistics.values.up")} data={deferredStatistics.upload} onClick={() => setExpandedChart('avgUpload')}/>,
-        services: <ServicesCard/>,
-        map: <MapCard/>,
-        attacks: <AttacksCard/>
+        combined: <CombinedChart labels={deferredStatistics.labels} data={deferredStatistics.data} failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('combined')} compact/>,
+        services: <ServicesCard onClick={() => setExpandedChart('services')}/>,
+        map: <MapCard onClick={() => setExpandedChart('map')}/>,
+        attacks: <AttacksCard onClick={() => setExpandedChart('attacks')}/>
     };
 
     // While customizing, the buttons take the place of the header icons, so the cards stay where they really are
@@ -341,7 +363,8 @@ export const Statistics = () => {
             <ChartModal 
                 isOpen={!!expandedChart} 
                 onClose={() => setExpandedChart(null)}
-                isChart={['download', 'upload', 'ping', 'hourly'].includes(expandedChart)}
+                isChart={['download', 'upload', 'ping', 'hourly', 'combined'].includes(expandedChart)}
+                wide={['services', 'map', 'attacks', 'report'].includes(expandedChart)}
             >
                 {expandedChart && renderChart(expandedChart)}
             </ChartModal>

@@ -1,5 +1,4 @@
 import {useEffect, useMemo, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 import StatisticContainer from "@/pages/Statistics/components/StatisticContainer";
 import {jsonRequest} from "@/common/utils/RequestUtil";
@@ -7,9 +6,8 @@ import {countryName} from "@/common/utils/ServiceUtil";
 import Globe from "@/common/components/Globe";
 import "./styles.sass";
 
-// The globe of attacks around the world, turning; the map page has the details
-export const AttacksCard = () => {
-    const navigate = useNavigate();
+// The globe of attacks around the world, turning; the modal has the details
+export const AttacksCard = ({onClick}) => {
     const [attacks, setAttacks] = useState(null);
 
     useEffect(() => {
@@ -29,15 +27,8 @@ export const AttacksCard = () => {
     const spots = useMemo(() => [...attacks?.countrySpots || [], ...attacks?.sources || []], [attacks]);
     const top = attacks?.countries?.[0];
 
-    const openMap = () => {
-        try {
-            localStorage.setItem("mapAttacks", "true");
-        } catch {}
-        navigate("/map");
-    };
-
     return (
-        <StatisticContainer title={t("dashboard.cards.attacks")} onClick={openMap}>
+        <StatisticContainer title={t("dashboard.cards.attacks")} onClick={onClick}>
             <div className="attacks-card">
                 <div className="attacks-card-globe"><Globe data={null} attacks={spots} showConnection={false} compact/></div>
                 {attacks?.total && <p>

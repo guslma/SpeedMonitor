@@ -1,8 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faGlobe, faShieldHalved} from "@fortawesome/free-solid-svg-icons";
 import {jsonRequest} from "@/common/utils/RequestUtil";
 import {countryName, describeLocation, formatMs, pingColor, placeName, stateColor} from "@/common/utils/ServiceUtil";
 import Globe from "@/common/components/Globe";
@@ -10,31 +7,18 @@ import "./styles.sass";
 
 const REFRESH = 2 * 60 * 1000;
 const ATTACKS_REFRESH = 60 * 60 * 1000;
-const ATTACKS_KEY = "mapAttacks";
-
-const readToggle = () => {
-    try {
-        return localStorage.getItem(ATTACKS_KEY) === "true";
-    } catch {
-        return false;
-    }
-};
 
 const place = placeName;
 
-// Where the internet of this server goes: the services it checks, the speed test servers and the other servers
-export const Map = () => {
-    const navigate = useNavigate();
+// Opened from a dashboard card, in a modal. mode "connection": where the internet of this server goes (the
+// services it checks, the speed test servers and the other servers). mode "attacks": the attacks around the world.
+export const Map = ({mode = "connection"}) => {
     const [data, setData] = useState(null);
     const [failed, setFailed] = useState(false);
-    // The attacks layer is remembered in this browser
-    const [showAttacks, setShowAttacks] = useState(readToggle);
+    const showAttacks = mode === "attacks";
     const [attacks, setAttacks] = useState(null);
 
     useEffect(() => {
-        try {
-            localStorage.setItem(ATTACKS_KEY, String(showAttacks));
-        } catch {}
         if (!showAttacks) return;
         const load = () => jsonRequest("/map/attacks").then(setAttacks).catch(() => setAttacks({error: true, sources: []}));
         load();
@@ -68,23 +52,7 @@ export const Map = () => {
     const nodes = data?.nodes || [];
 
     return (
-        <div className="map-page">
-            <div className="map-toolbar">
-                <button className="dialog-btn" onClick={() => navigate("/statistics")}>
-                    <FontAwesomeIcon icon={faArrowLeft}/> {t("map.back")}
-                </button>
-                {/* Two maps, each on its own: this connection, or the attacks around the world */}
-                <div className="map-modes" role="tablist">
-                    <button role="tab" aria-selected={!showAttacks} className={"map-mode" + (showAttacks ? "" : " map-mode-active")}
-                            onClick={() => setShowAttacks(false)}>
-                        <FontAwesomeIcon icon={faGlobe}/> {t("map.modes.connection")}
-                    </button>
-                    <button role="tab" aria-selected={showAttacks} className={"map-mode map-attacks-toggle" + (showAttacks ? " map-mode-active map-mode-attacks" : "")}
-                            onClick={() => setShowAttacks(true)}>
-                        <FontAwesomeIcon icon={faShieldHalved}/> {t("map.attacks.toggle")}
-                    </button>
-                </div>
-            </div>
+        <div className="map-page map-modal">
             <div className="map-intro">
                 <h1>{showAttacks ? t("map.attacks.title") : t("map.title")}</h1>
                 <p>{showAttacks ? t("map.attacks.description")

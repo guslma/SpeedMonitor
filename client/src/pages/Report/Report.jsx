@@ -1,9 +1,8 @@
 import {useContext, useEffect, useState} from "react";
 import {formatDateParam} from "@/common/utils/ConnectionUtil";
-import {useNavigate, useSearchParams} from "react-router-dom";
 import {t} from "i18next";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faPrint} from "@fortawesome/free-solid-svg-icons";
+import {faPrint} from "@fortawesome/free-solid-svg-icons";
 import {jsonRequest} from "@/common/utils/RequestUtil";
 import {PreferencesContext} from "@/common/contexts/Preferences";
 import {formatDateTime} from "@/common/utils/FormatUtil";
@@ -77,17 +76,17 @@ const PeriodPicker = ({from, to, firstTest, onChange}) => {
     );
 };
 
-export const Report = () => {
-    const [params, setParams] = useSearchParams();
-    const navigate = useNavigate();
+// Opened in a modal from the dashboard, starting with the period chosen there (the current month without one)
+export const Report = ({from: initialFrom, to: initialTo}) => {
     const [preferences] = useContext(PreferencesContext);
     const [data, setData] = useState(null);
     const [failed, setFailed] = useState(false);
-    // Without a period in the address, show the current month
-    const thisMonth = presets()[0];
-    const from = validDate(params.get("from")) ? params.get("from") : thisMonth.from;
-    const to = validDate(params.get("to")) ? params.get("to") : thisMonth.to;
-    const changePeriod = (newFrom, newTo) => setParams({from: newFrom, to: newTo});
+    const [period, setPeriod] = useState(() => {
+        const thisMonth = presets()[0];
+        return {from: validDate(initialFrom) ? initialFrom : thisMonth.from, to: validDate(initialTo) ? initialTo : thisMonth.to};
+    });
+    const {from, to} = period;
+    const changePeriod = (newFrom, newTo) => setPeriod({from: newFrom, to: newTo});
 
     useEffect(() => {
         setData((current) => current && {...current, loading: true});
@@ -114,9 +113,6 @@ export const Report = () => {
     return (
         <div className={"report-page connection-details" + (data.loading ? " report-loading" : "")}>
             <div className="report-toolbar">
-                <button className="dialog-btn" onClick={() => navigate("/statistics")}>
-                    <FontAwesomeIcon icon={faArrowLeft}/> <span>{t("connection.back")}</span>
-                </button>
                 <button className="dialog-btn" onClick={() => window.print()}>
                     <FontAwesomeIcon icon={faPrint}/> <span>{t("connection.print")}</span>
                 </button>

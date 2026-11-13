@@ -14,7 +14,7 @@ Ele também confere se serviços como WhatsApp, YouTube e Netflix estão respond
 
 ## Recursos
 
-- **Estatísticas como página inicial**: download, upload, ping, estabilidade, médias por horário e um resumo da conexão
+- **Estatísticas como página inicial**: download, upload, ping, estabilidade, médias por horário e um resumo da conexão, além de um gráfico com download, upload, ping e jitter juntos para ver se eles mudam ao mesmo tempo
 - **Registro de quedas**: início, fim e duração de cada queda, e a disponibilidade do período. Com o endereço do roteador configurado, ele também indica se a queda foi do provedor ou da rede de casa
 - **Plano contratado**: compara a velocidade medida com o plano, mês a mês, usando a referência da Anatel (média de pelo menos 80% do contratado e pelo menos 40% em 95% dos testes)
 - **Relatório para imprimir ou salvar em PDF**, com quedas, testes abaixo do mínimo e testes que falharam. Serve de base para uma reclamação na operadora ou na Anatel
@@ -39,7 +39,7 @@ Clique no card **Serviços** para ver cada serviço, o tempo de resposta e as ú
 
 ### Ataques no mundo
 
-Clique no card **Ataques no mundo**, ou em **Mapa da conexão** → **Ataques no mundo**. O globo gira; arraste para virar e use a roda do mouse ou os botões para aproximar.
+Clique no card **Ataques no mundo** para abrir o globo com os países e as portas mais atacadas. Arraste para virar o globo e use a roda do mouse ou os botões para aproximar.
 
 ![Ataques no mundo](docs/screenshots/ataques.png)
 
@@ -51,7 +51,7 @@ Clique no card **Conexão** para ver cada queda e se o plano foi cumprido em cad
 
 ### Relatório de qualidade
 
-Em **Gerar relatório**, o período escolhido vira uma página pronta para imprimir ou salvar em PDF.
+Em **Gerar relatório**, o período escolhido abre num modal pronto para imprimir ou salvar em PDF. Na impressão sai só o relatório.
 
 ![Relatório de qualidade da internet](docs/screenshots/relatorio.png)
 

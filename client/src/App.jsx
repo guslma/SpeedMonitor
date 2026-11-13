@@ -28,9 +28,6 @@ import {PushOverIcon} from "@/common/assets/icons/pushover";
 import Nodes from "@/pages/Nodes";
 import Statistics from "@/pages/Statistics";
 import Home from "@/pages/Home";
-import Report from "@/pages/Report";
-import Services from "@/pages/Services";
-import MapPage from "@/pages/Map";
 
 library.add(faBell, faBellConcierge, faDatabase, faGlobe, faHeartPulse, faDiscord, faTelegram);
 library.add(PushOverIcon);
@@ -81,9 +78,8 @@ const App = () => {
                 {path: "/overview", element: <Home/>},
                 {path: "/nodes", element: <Nodes/>},
                 {path: "/statistics", element: <Statistics/>},
-                {path: "/report", element: <Report/>},
-                {path: "/services", element: <Services/>},
-                {path: "/map", element: <MapPage/>}
+                // These used to be pages; they open as modals on the dashboard now
+                ...["/report", "/map", "/services"].map((path) => ({path, element: <Navigate to="/statistics" replace/>}))
             ]
         }
     ]);
