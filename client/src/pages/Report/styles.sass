@@ -12,6 +12,20 @@
   .connection-stats
     margin-top: 1.25rem
 
+// Download, upload, ping and jitter of the period, like the dashboard card
+.report-chart
+  margin-top: 1.5rem
+
+  .chart-container, .chart-container:hover
+    cursor: default
+    transform: none
+    box-shadow: none
+    border-color: $light-gray
+
+  .chart-body
+    height: 18rem
+    max-height: none
+
 .report-toolbar
   display: flex
   justify-content: flex-start
@@ -158,6 +172,19 @@
 
     .connection-table th
       position: static
+
+    // The chart stays whole on one page, stretched to its width
+    .report-chart
+      break-inside: avoid
+
+      .chart-body
+        height: auto
+        overflow: visible
+
+      canvas
+        width: 100% !important
+        height: auto !important
+        max-height: none !important
 
     // A heading never stays alone at the bottom of a page
     h1, h3

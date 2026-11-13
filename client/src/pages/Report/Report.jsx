@@ -1,4 +1,5 @@
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
+import {Chart} from "chart.js";
 import {formatDateParam} from "@/common/utils/ConnectionUtil";
 import {t} from "i18next";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -8,8 +9,25 @@ import {PreferencesContext} from "@/common/contexts/Preferences";
 import {formatDateTime} from "@/common/utils/FormatUtil";
 import {availabilityColor, describeError, formatDuration} from "@/common/utils/ConnectionUtil";
 import {MonthTable, OutageTable} from "@/pages/Statistics/charts/ConnectionChart/ConnectionDetails";
+import CombinedChart from "@/pages/Statistics/charts/CombinedChart";
 import "@/pages/Statistics/charts/ConnectionChart/styles.sass";
 import "./styles.sass";
+
+// Size the chart is drawn at for paper; the print styles stretch it to the page width, keeping its proportions
+const PRINT_CHART = {width: 720, height: 300};
+
+// The tests of the period in the shape the dashboard charts use
+const chartSeries = (tests) => ({
+    labels: tests.map((test) => test.created),
+    data: {
+        download: tests.map((test) => test.error ? null : test.download),
+        upload: tests.map((test) => test.error ? null : test.upload),
+        ping: tests.map((test) => test.error ? null : test.ping),
+        jitter: tests.map((test) => test.error ? null : test.jitter)
+    },
+    failed: tests.map((test) => !!test.error),
+    errors: tests.map((test) => test.error || null)
+});
 
 const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value || "");
 
@@ -98,6 +116,21 @@ export const Report = ({from: initialFrom, to: initialTo}) => {
             .catch(() => setFailed(true));
     }, [from, to]);
 
+    const series = useMemo(() => data?.tests ? chartSeries(data.tests) : null, [data?.tests]);
+
+    // On screen the chart is as wide as the modal; on paper it is redrawn at a page's size, then back
+    useEffect(() => {
+        const charts = () => Object.values(Chart.instances).filter((chart) => chart.canvas?.closest(".report-chart"));
+        const beforePrint = () => charts().forEach((chart) => chart.resize(PRINT_CHART.width, PRINT_CHART.height));
+        const afterPrint = () => charts().forEach((chart) => chart.resize());
+        window.addEventListener("beforeprint", beforePrint);
+        window.addEventListener("afterprint", afterPrint);
+        return () => {
+            window.removeEventListener("beforeprint", beforePrint);
+            window.removeEventListener("afterprint", afterPrint);
+        };
+    }, []);
+
     const picker = <PeriodPicker from={from} to={to} firstTest={data?.summary?.firstTest} onChange={changePeriod}/>;
     if (failed) return <div className="report-page">{picker}<p>{t("connection.report_failed")}</p></div>;
     if (!data) return <div className="report-page">{picker}<p>{t("connection.loading")}</p></div>;
@@ -146,6 +179,10 @@ export const Report = ({from: initialFrom, to: initialTo}) => {
                     <strong>{tests.length}</strong>
                 </div>
             </div>
+
+            {tests.length > 0 && series && <div className="report-chart">
+                <CombinedChart labels={series.labels} data={series.data} failed={series.failed} errors={series.errors}/>
+            </div>}
 
             <h3>{t("connection.plan_title")}</h3>
             {plan.configured ? <>
