@@ -27,15 +27,19 @@ import {ConnectionDetails} from "@/pages/Statistics/charts/ConnectionChart/Conne
 import PlanDialog from "@/common/components/PlanDialog";
 import DashboardCard from "@/pages/Statistics/components/DashboardCard";
 import HiddenCardsDialog from "@/pages/Statistics/components/HiddenCardsDialog";
-import {DEFAULT_LAYOUT, isDefaultLayout, moveCard, parseLayout} from "@/pages/Statistics/layout";
+import {DEFAULT_LAYOUT, DEVICES, deviceFor, isDefaultLayout, layoutValue, moveCard, parseLayout} from "@/pages/Statistics/layout";
 import {ConfigContext} from "@/common/contexts/Config";
 import {ToastNotificationContext} from "@/common/contexts/ToastNotification";
 import {patchRequest} from "@/common/utils/RequestUtil";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faCircleInfo, faExclamationTriangle, faEyeSlash, faRotateLeft} from "@fortawesome/free-solid-svg-icons";
+import {
+    faCheck, faCircleInfo, faDesktop, faExclamationTriangle, faEyeSlash, faLaptop, faMobileScreen, faRotateLeft, faXmark
+} from "@fortawesome/free-solid-svg-icons";
 import {createPortal} from "react-dom";
 import HintTooltip from "@/common/components/Tooltip";
 import i18n, {t} from "i18next";
+
+const DEVICE_ICONS = {phone: faMobileScreen, laptop: faLaptop, desktop: faDesktop};
 import "./styles.sass";
 
 ChartJS.register(ArcElement, Tooltip, CategoryScale, LinearScale, PointElement, LineElement, Title, Legend, BarElement, RadialLinearScale, Filler);
@@ -99,20 +103,37 @@ export const Statistics = () => {
     const [draft, setDraft] = useState(null);
     const [dragIndex, setDragIndex] = useState(null);
     const [showHidden, setShowHidden] = useState(false);
-    const savedLayout = parseLayout(config.dashboardLayout);
+    // Phones, laptops and computers each have their own layout, picked by the width of the screen
+    const [device, setDevice] = useState(() => deviceFor(window.innerWidth));
+    const [editDevice, setEditDevice] = useState(null);
+    // Just saved: shown right away, instead of the old layout flashing until the config is loaded again
+    const [justSaved, setJustSaved] = useState(null);
+    const savedValue = layoutValue(justSaved ? {...config, [justSaved.key]: justSaved.value} : config, device);
+    const savedLayout = parseLayout(savedValue);
     const layout = editing && draft ? draft : savedLayout;
 
-    // The header button asks to customize the cards
+    useEffect(() => {
+        if (justSaved && config[justSaved.key] === justSaved.value) setJustSaved(null);
+    }, [config, justSaved]);
+
+    useEffect(() => {
+        const onResize = () => setDevice(deviceFor(window.innerWidth));
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
+
+    // The header button asks to customize the cards (of the kind of screen in use when it was pressed)
     useEffect(() => {
         const start = () => {
             sessionStorage.removeItem("speedmonitor:customize");
-            setDraft(parseLayout(config.dashboardLayout));
+            setDraft(parseLayout(savedValue));
+            setEditDevice(device);
             setEditing(true);
         };
         if (config.dashboardLayout !== undefined && sessionStorage.getItem("speedmonitor:customize")) start();
         window.addEventListener("speedmonitor:customize", start);
         return () => window.removeEventListener("speedmonitor:customize", start);
-    }, [config.dashboardLayout]);
+    }, [savedValue, device, config.dashboardLayout]);
 
     const changeCard = (index, changes) => setDraft((cards) => cards.map((card, i) => i === index ? {...card, ...changes} : card));
     const move = (from, to) => setDraft((cards) => moveCard(cards, from, to));
@@ -132,8 +153,10 @@ export const Statistics = () => {
     const saveLayout = async () => {
         const value = isDefaultLayout(draft) ? "default" : JSON.stringify(draft);
         try {
-            const response = await patchRequest("/config/dashboardLayout", {value});
+            const key = DEVICES[editDevice || device].key;
+            const response = await patchRequest("/config/" + key, {value});
             if (!response.ok) throw new Error();
+            setJustSaved({key, value});
             reloadConfig();
             setEditing(false);
             updateToast(t("dropdown.changes_applied"), "green", faCheck);
@@ -263,6 +286,12 @@ export const Statistics = () => {
             <HintTooltip content={t("dashboard.help")} position="bottom">
                 <FontAwesomeIcon icon={faCircleInfo} className="dash-toolbar-help"/>
             </HintTooltip>
+            <HintTooltip content={t("dashboard.device_help." + (editDevice || device))} position="bottom">
+                <span className="dash-toolbar-device">
+                    <FontAwesomeIcon icon={DEVICE_ICONS[editDevice || device]}/>
+                    <span className="dash-toolbar-label">{t("dashboard.device." + (editDevice || device))}</span>
+                </span>
+            </HintTooltip>
             <button className="dialog-btn" disabled={hiddenCount === 0} onClick={() => setShowHidden(true)}
                     title={t("dashboard.hidden_title")}>
                 <FontAwesomeIcon icon={faEyeSlash}/> <span className="dash-toolbar-label">{t("dashboard.hidden_cards", {count: hiddenCount})}</span>
@@ -272,7 +301,10 @@ export const Statistics = () => {
                     title={t("dashboard.reset")}>
                 <FontAwesomeIcon icon={faRotateLeft}/> <span className="dash-toolbar-label">{t("dashboard.reset")}</span>
             </button>
-            <button className="dialog-btn" onClick={() => setEditing(false)}>{t("dashboard.cancel")}</button>
+            <button className="dialog-btn" onClick={() => setEditing(false)} title={t("dashboard.cancel")}>
+                <FontAwesomeIcon icon={faXmark} className="dash-toolbar-phone-only"/>
+                <span className="dash-toolbar-phone-hide">{t("dashboard.cancel")}</span>
+            </button>
             <button className="dialog-btn dash-save" onClick={saveLayout}>
                 <FontAwesomeIcon icon={faCheck}/> <span>{t("dashboard.save")}</span>
             </button>

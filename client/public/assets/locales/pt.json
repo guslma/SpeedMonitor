@@ -713,7 +713,7 @@
   },
   "dashboard": {
     "customize": "Personalizar painel",
-    "help": "Arraste os cards para mudar a ordem e puxe o canto de baixo para mudar o tamanho. Toque no olho para ocultar um card: ele sai do painel e fica em \"Cards ocultos\".",
+    "help": "Arraste os cards para mudar a ordem (no celular, toque e segure antes de arrastar) e puxe o canto de baixo para mudar o tamanho. Toque no olho para ocultar um card: ele sai do painel e fica em \"Cards ocultos\".",
     "reset": "Restaurar padrão",
     "cancel": "Cancelar",
     "save": "Salvar",
@@ -739,6 +739,16 @@
     "hidden_cards_one": "{{count}} card oculto",
     "hidden_cards_other": "{{count}} cards ocultos",
     "hidden_title": "Cards ocultos",
-    "hidden_description": "Estes cards não aparecem no painel. Toque em Mostrar para trazer um de volta ao lugar onde ele estava."
+    "hidden_description": "Estes cards não aparecem no painel. Toque em Mostrar para trazer um de volta ao lugar onde ele estava.",
+    "device": {
+      "phone": "Celular",
+      "laptop": "Notebook e tablet",
+      "desktop": "Computador"
+    },
+    "device_help": {
+      "phone": "Você está editando o layout do celular (telas de até 900 px). O notebook e o computador têm o layout deles.",
+      "laptop": "Você está editando o layout de notebooks e tablets (telas de 901 a 1899 px). O celular e o computador têm o layout deles.",
+      "desktop": "Você está editando o layout do computador (telas a partir de 1900 px). Celular e notebook usam este layout até você personalizar neles."
+    }
   }
 }

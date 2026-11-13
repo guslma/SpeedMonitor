@@ -136,6 +136,19 @@
     border-color: $accent-primary
     color: $accent-primary
 
+// Which kind of screen this layout is for
+.dash-toolbar-device
+  display: flex
+  align-items: center
+  gap: 0.45rem
+  padding: 0.45rem 0.75rem
+  border-radius: 0.6rem
+  border: 1px solid $accent-primary
+  color: $accent-primary
+  font-size: 0.95rem
+  white-space: nowrap
+  cursor: help
+
 .dash-toolbar-help
   color: $subtext
   font-size: 1.15rem
@@ -155,6 +168,35 @@
 // Narrower screens show only the icons (and the number of hidden cards), so the toolbar fits beside the title
 .dash-toolbar-count
   display: none
+
+// Phones: Cancel is just an X and the buttons are tighter, so the bar fits in one line
+.dash-toolbar-phone-only
+  display: none
+
+@media screen and (max-width: 600px)
+  .dash-toolbar
+    gap: 0.4rem
+    flex-wrap: nowrap
+
+    .dialog-btn, .dash-toolbar-device
+      padding: 0.5rem 0.65rem
+
+  .dash-toolbar-phone-only
+    display: inline
+
+  .dash-toolbar-phone-hide
+    display: none
+
+  // The title would only show a cut piece beside the bar
+  .header-main:has(.dash-toolbar) > .header-left
+    display: none
+
+@media screen and (max-width: 400px)
+  .dash-toolbar
+    gap: 0.3rem
+
+    .dialog-btn, .dash-toolbar-device
+      padding: 0.45rem 0.5rem
 
 @media screen and (max-width: 1350px)
   .dash-toolbar-label

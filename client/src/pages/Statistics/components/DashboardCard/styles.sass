@@ -26,6 +26,10 @@
 
 .dash-editing
   cursor: grab
+  // Touching and holding picks the card up, instead of selecting text or opening the phone's menu
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  user-select: none
   border-radius: 1rem
   outline: 2px dashed $light-gray
   outline-offset: 4px
@@ -40,6 +44,12 @@
 
 .dash-dragging
   opacity: 0.4
+
+  @media (pointer: coarse)
+    // With a finger the card stays visible and looks picked up
+    opacity: 0.85
+    outline-color: $accent-primary
+    transform: scale(0.98)
 
 // Eye in the top right corner that hides the card
 .dash-hide

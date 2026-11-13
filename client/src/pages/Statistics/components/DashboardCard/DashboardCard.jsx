@@ -43,6 +43,72 @@ export const DashboardCard = ({card, index, editing, dragging, onChange, onDragS
         }
     });
 
+    // Fingers: the browser's drag and drop does not work with them, so touching and holding a card picks it up and
+    // dragging it over another one moves it there, scrolling the page when the finger gets close to its top or bottom
+    const latest = useRef(null);
+    const coarse = window.matchMedia?.("(pointer: coarse)").matches;
+    latest.current = {index, onDragStart, onDragOver, onDragEnd};
+    useEffect(() => {
+        const element = ref.current;
+        if (!editing || !element) return;
+        const fake = {preventDefault: () => {}, dataTransfer: {}};
+        const scroller = () => document.body.scrollHeight > document.body.clientHeight ? document.body : document.scrollingElement;
+        let hold = null, active = false, frame = null, start = null, finger = null;
+
+        const moveOver = () => {
+            const over = document.elementFromPoint(finger.x, finger.y)?.closest(".dash-card");
+            if (over?.dataset.index !== undefined) latest.current.onDragOver(fake, Number(over.dataset.index));
+        };
+        const autoScroll = () => {
+            const edge = 90;
+            const speed = finger.y < edge ? -(edge - finger.y) / 6 : finger.y > window.innerHeight - edge ? (finger.y - window.innerHeight + edge) / 6 : 0;
+            if (speed) {
+                scroller().scrollBy(0, speed);
+                moveOver();
+            }
+            frame = requestAnimationFrame(autoScroll);
+        };
+        const stop = () => {
+            clearTimeout(hold);
+            cancelAnimationFrame(frame);
+            if (active) latest.current.onDragEnd();
+            hold = null;
+            active = false;
+        };
+        const onStart = (event) => {
+            if (event.touches.length !== 1 || event.target.closest(".dash-hide, .dash-resize")) return;
+            start = finger = {x: event.touches[0].clientX, y: event.touches[0].clientY};
+            hold = setTimeout(() => {
+                active = true;
+                navigator.vibrate?.(15);
+                latest.current.onDragStart(fake, latest.current.index);
+                frame = requestAnimationFrame(autoScroll);
+            }, 350);
+        };
+        const onMove = (event) => {
+            finger = {x: event.touches[0].clientX, y: event.touches[0].clientY};
+            if (!active) {
+                // Moving before the hold ends is scrolling the page
+                if (Math.hypot(finger.x - start.x, finger.y - start.y) > 10) clearTimeout(hold);
+                return;
+            }
+            event.preventDefault();
+            moveOver();
+        };
+
+        element.addEventListener("touchstart", onStart, {passive: true});
+        element.addEventListener("touchmove", onMove, {passive: false});
+        element.addEventListener("touchend", stop);
+        element.addEventListener("touchcancel", stop);
+        return () => {
+            stop();
+            element.removeEventListener("touchstart", onStart);
+            element.removeEventListener("touchmove", onMove);
+            element.removeEventListener("touchend", stop);
+            element.removeEventListener("touchcancel", stop);
+        };
+    }, [editing]);
+
     // Hidden cards stay out of the dashboard, also while customizing, so it shows how it will look
     if (!card.visible) return null;
 
@@ -97,8 +163,8 @@ export const DashboardCard = ({card, index, editing, dragging, onChange, onDragS
     if (resizing) classes.push("dash-resizing");
 
     return (
-        <div ref={ref} className={classes.join(" ")} style={{"--span": card.size, "--height": shown, "--dash-zoom": scale}}
-             draggable={editing && !resizing}
+        <div ref={ref} data-index={index} className={classes.join(" ")} style={{"--span": card.size, "--height": shown, "--dash-zoom": scale}}
+             draggable={editing && !resizing && !coarse}
              onDragStart={editing ? (event) => onDragStart(event, index) : undefined}
              onDragOver={editing ? (event) => onDragOver(event, index) : undefined}
              onDrop={editing ? (event) => onDrop(event, index) : undefined}

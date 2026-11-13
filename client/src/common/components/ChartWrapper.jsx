@@ -1,4 +1,4 @@
-import {useRef, useEffect, useState} from "react";
+import {useRef, useEffect, useLayoutEffect, useState} from "react";
 import {Chart} from "chart.js";
 import "../utils/chartConfig";
 
@@ -23,7 +23,8 @@ export default function ChartWrapper({type, data, options}) {
         }
     }, [ready, type, data, options]);
 
-    useEffect(() => () => {
+    // Destroyed while the canvas is still on the page: later, chart.js notices it was removed and tries to resize it
+    useLayoutEffect(() => () => {
         chartRef.current?.destroy();
         chartRef.current = null;
     }, []);

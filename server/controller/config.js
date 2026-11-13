@@ -31,6 +31,9 @@ const configDefaults = {
     router: "none",
     outageMonitor: "true",
     dashboardLayout: "default",
+    // Own layouts for phones and for laptops and tablets; "none" uses dashboardLayout (the computer one)
+    dashboardLayoutPhone: "none",
+    dashboardLayoutLaptop: "none",
     serverName: "none"
 }
 
@@ -151,7 +154,8 @@ export const validateInput = async (key, value) => {
             return `The server name must have ${MAX_SERVER_NAME} characters or less`;
     }
 
-    if (key === "dashboardLayout") {
+    if (["dashboardLayoutPhone", "dashboardLayoutLaptop"].includes(key) && value.toString() === "none") value = "none";
+    else if (["dashboardLayout", "dashboardLayoutPhone", "dashboardLayoutLaptop"].includes(key)) {
         value = validateLayout(value.toString());
         if (value === null) return "You need to provide a valid layout";
     }

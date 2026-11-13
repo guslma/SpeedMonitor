@@ -21,6 +21,21 @@ export const DEFAULT_LAYOUT = [
     {id: "hourly", size: 6, height: 4, visible: true}
 ];
 
+// Each kind of screen keeps its own layout. The computer one is also used by the others until they get their own.
+export const DEVICES = {
+    phone: {key: "dashboardLayoutPhone"},
+    laptop: {key: "dashboardLayoutLaptop"},
+    desktop: {key: "dashboardLayout"}
+};
+
+// Same limits as the styles: up to 900px the cards take the whole width, from 1900px the wide grid
+export const deviceFor = (width) => width <= 900 ? "phone" : width < 1900 ? "laptop" : "desktop";
+
+export const layoutValue = (config, device) => {
+    const own = config[DEVICES[device].key];
+    return own !== undefined && own !== "none" ? own : config.dashboardLayout;
+};
+
 export const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 // Reads the saved layout, dropping cards that no longer exist and adding new ones at the end

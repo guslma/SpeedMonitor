@@ -713,7 +713,7 @@
   },
   "dashboard": {
     "customize": "Customize dashboard",
-    "help": "Drag the cards to change the order and pull the bottom corner to resize them. Choose the eye to hide a card: it leaves the dashboard and goes to \"Hidden cards\".",
+    "help": "Drag the cards to change their order (on a phone, touch and hold before dragging) and pull the bottom corner to change their size. Tap the eye to hide a card: it leaves the dashboard and goes to \"Hidden cards\".",
     "reset": "Restore default",
     "cancel": "Cancel",
     "save": "Save",
@@ -739,6 +739,16 @@
     "hidden_cards_one": "{{count}} hidden card",
     "hidden_cards_other": "{{count}} hidden cards",
     "hidden_title": "Hidden cards",
-    "hidden_description": "These cards are not on the dashboard. Choose Show to bring one back to where it was."
+    "hidden_description": "These cards are not on the dashboard. Choose Show to bring one back to where it was.",
+    "device": {
+      "phone": "Phone",
+      "laptop": "Laptop and tablet",
+      "desktop": "Computer"
+    },
+    "device_help": {
+      "phone": "You are editing the phone layout (screens up to 900 px). Laptops and computers keep their own.",
+      "laptop": "You are editing the layout for laptops and tablets (screens from 901 to 1899 px). Phones and computers keep their own.",
+      "desktop": "You are editing the computer layout (screens from 1900 px). Phones and laptops use it until you customize them."
+    }
   }
 }
