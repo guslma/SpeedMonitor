@@ -1,0 +1,89 @@
+@use "@/common/styles/colors" as *
+
+.services-card
+  display: flex
+  flex-direction: column
+  gap: 0.75rem
+  width: 100%
+
+// From the top, like a list (the dashboard centers the other cards' content)
+.dash-card > .stats-container > .stats-content > .services-card
+  justify-content: flex-start
+  padding-top: 0.25rem
+
+.services-card-summary
+  margin: 0
+  font-size: 0.95rem
+  font-weight: 600
+  color: $subtext
+
+.services-card-up
+  color: $accent-primary
+
+.services-card-slow
+  color: $accent-warning
+
+.services-card-down
+  color: $accent-danger
+
+// The services with a problem, on top and one per line
+.services-card-problems
+  display: flex
+  flex-direction: column
+  gap: 0.4rem
+
+.services-card-problem
+  display: flex
+  align-items: center
+  gap: 0.55rem
+  padding: 0.55rem 0.75rem
+  border-radius: 0.6rem
+  border: 1px solid
+  background: $darker-gray
+  font-size: 0.95rem
+
+  strong
+    color: $white
+
+  span:last-child
+    margin-left: auto
+    font-size: 0.85rem
+    font-weight: 600
+    text-align: right
+
+.service-dot-down
+  animation: service-pulse 1.4s ease-in-out infinite
+
+.services-card-grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr))
+  gap: 0.5rem
+
+.services-card-item
+  display: flex
+  align-items: center
+  gap: 0.45rem
+  padding: 0.6rem 0.75rem
+  border-radius: 0.6rem
+  background: $darker-gray
+  font-size: 0.95rem
+  min-width: 0
+
+.services-card-dot
+  flex-shrink: 0
+  width: 0.55rem
+  height: 0.55rem
+  border-radius: 50%
+
+.services-card-name
+  flex: 1
+  min-width: 0
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  color: $white
+
+.services-card-ms
+  color: $subtext
+  font-size: 0.75rem
+  font-variant-numeric: tabular-nums

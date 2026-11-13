@@ -727,7 +727,10 @@
       "download": "Gráfico de download",
       "upload": "Gráfico de upload",
       "ping": "Gráfico de ping",
-      "hourly": "Velocidade por horário"
+      "hourly": "Velocidade por horário",
+      "services": "Serviços",
+      "map": "Mapa da conexão",
+      "attacks": "Ataques no mundo"
     },
     "resize": "Arraste para mudar o tamanho",
     "width": "{{percent}}% da largura",
@@ -749,6 +752,113 @@
       "phone": "Você está editando o layout do celular (telas de até 900 px). O notebook e o computador têm o layout deles.",
       "laptop": "Você está editando o layout de notebooks e tablets (telas de 901 a 1899 px). O celular e o computador têm o layout deles.",
       "desktop": "Você está editando o layout do computador (telas a partir de 1900 px). Celular e notebook usam este layout até você personalizar neles."
+    }
+  },
+  "services": {
+    "title": "Serviços",
+    "description": "A cada 2 minutos o SpeedMonitor confere se estes serviços respondem pela sua internet. Se só um deles falha, o problema é dele, não da sua conexão.",
+    "check_now": "Verificar agora",
+    "monitor_off": "A verificação de serviços está desligada.",
+    "turn_on": "Ligar",
+    "turn_off": "Desligar a verificação de serviços",
+    "uptime": "{{value}}% no ar em 24 h",
+    "note": "As barras mostram as últimas 24 horas, uma por hora: verde respondeu, laranja lento, vermelho fora do ar, cinza sem internet.",
+    "since_minutes_one": "há {{count}} min",
+    "since_minutes_other": "há {{count}} min",
+    "since_hours_one": "há {{count}} h",
+    "since_hours_other": "há {{count}} h",
+    "since_days_one": "há {{count}} dia",
+    "since_days_other": "há {{count}} dias",
+    "state": {
+      "waiting": "Aguardando a primeira verificação",
+      "offline": "Sem internet",
+      "down": "Fora do ar {{since}}",
+      "slow": "Lento · {{ms}}",
+      "up": "Normal · {{ms}}"
+    },
+    "summary": {
+      "waiting": "Aguardando a primeira verificação…",
+      "offline": "Sem internet: os serviços não estão sendo culpados.",
+      "down_one": "{{names}} está fora do ar. O resto da internet funciona.",
+      "down_other": "{{count}} serviços fora do ar: {{names}}. O resto da internet funciona.",
+      "slow_one": "{{names}} está lento.",
+      "slow_other": "{{count}} serviços lentos: {{names}}.",
+      "up": "Todos os serviços estão respondendo."
+    },
+    "edit": {
+      "button": "Editar lista",
+      "name": "Nome",
+      "url": "Endereço (ex.: www.exemplo.com)",
+      "remove": "Remover",
+      "add": "Adicionar serviço",
+      "error": "Não foi possível salvar a lista. Confira os nomes e endereços."
+    },
+    "card": {
+      "altered": "{{ms}} · normal {{normal}}",
+      "altered_summary_one": "{{count}} serviço está mais lento que o normal.",
+      "altered_summary_other": "{{count}} serviços estão mais lentos que o normal."
+    }
+  },
+  "map": {
+    "title": "Mapa da conexão",
+    "back": "Voltar ao painel",
+    "home": "Sua conexão",
+    "description": "Para onde vai a sua internet a partir de {{city}}: de onde respondem os serviços verificados, os servidores dos testes de velocidade e os seus outros servidores.",
+    "description_unknown": "Para onde vai a sua internet: os serviços verificados, os servidores dos testes de velocidade e os seus outros servidores.",
+    "loading": "Carregando o mapa…",
+    "failed": "Não foi possível carregar o mapa.",
+    "services": "Serviços",
+    "servers": "Servidores dos testes (30 dias)",
+    "nodes": "Seus servidores",
+    "no_services": "Nenhum serviço verificado ainda.",
+    "no_servers": "Nenhum teste com servidor conhecido nos últimos 30 dias.",
+    "node_unknown": "Localização desconhecida",
+    "nearby": "Responde de perto (até {{km}} km)",
+    "ping": "ping {{value}} ms",
+    "tests_one": "{{count}} teste",
+    "tests_other": "{{count}} testes",
+    "card_summary": "A partir de {{city}} · {{count}} serviços no mapa",
+    "note": "Os locais vêm, nesta ordem: do nome do servidor (que costuma trazer o código do aeroporto da cidade), da Cloudflare, do endereço registrado (quando o tempo de resposta confirma) ou de uma estimativa pelo tempo de resposta, marcada com ≈ e um círculo vazado.",
+    "legend": {
+      "home": "Você",
+      "ok": "Normal",
+      "slow": "Lento",
+      "down": "Fora do ar",
+      "node": "Seus servidores",
+      "attack": "Ataques no mundo",
+      "estimate": "Local estimado",
+      "attack_city": "Ataques (cidade)",
+      "attack_country": "Ataques (país, vários endereços)"
+    },
+    "zoom_in": "Aproximar",
+    "zoom_out": "Afastar",
+    "zoom_fit": "Voltar para a sua região",
+    "attacks": {
+      "toggle": "Ataques no mundo",
+      "title": "Ataques no mundo hoje",
+      "description": "Pontos vermelhos: de onde vêm os ataques registrados hoje por sensores espalhados pela internet. Não são ataques contra a sua conexão.",
+      "countries": "Países de onde mais vêm",
+      "ports": "Portas mais atacadas (tentativas)",
+      "addresses_one": "{{count}} endereço atacante",
+      "addresses_other": "{{count}} endereços atacantes",
+      "spot_one": "{{attacks}} ataque · {{addresses}} endereço(s)",
+      "spot_other": "{{attacks}} ataques · {{addresses}} endereço(s)",
+      "failed": "Não foi possível buscar os ataques agora. Tente mais tarde.",
+      "source": "Fonte: SANS Internet Storm Center (DShield), os até 10 mil endereços que mais atacaram hoje, atualizado a cada hora. Os maiores de cada país aparecem na cidade; os outros, no centro do país. Localização aproximada; país pelo IP Geolocation by DB-IP (db-ip.com).",
+      "whole_country": "{{country}} (vários endereços)",
+      "total": "{{addresses}} endereços atacantes em {{countries}} países hoje",
+      "summary": "Resumo de hoje",
+      "pending_one": "Ainda localizando a cidade de {{count}} endereço: o mapa se completa sozinho em alguns minutos.",
+      "pending_other": "Ainda localizando a cidade de {{count}} endereços: o mapa se completa sozinho em alguns minutos.",
+      "card_top": "A maior parte vem de: {{country}}"
+    },
+    "modes": {
+      "connection": "Sua conexão"
+    },
+    "located": {
+      "name": "pelo nome do servidor ({{code}})",
+      "cloudflare": "pela Cloudflare ({{code}})",
+      "estimate": "estimado, responde tão rápido quanto {{name}}"
     }
   }
 }

@@ -10,6 +10,8 @@
 
 O SpeedMonitor roda testes de velocidade automaticamente (download, upload, ping e jitter), guarda o histórico e mostra tudo em gráficos e estatísticas. Entre um teste e outro, ele confere a conexão a cada 30 segundos para registrar cada queda. Com isso dá para saber quando a internet caiu, por quanto tempo, em que horário ela fica lenta e se a operadora entrega a velocidade contratada.
 
+Ele também confere se serviços como WhatsApp, YouTube e Netflix estão respondendo, para separar "a internet caiu" de "só esse serviço caiu", e mostra num globo para onde vai a sua internet e de onde vêm os ataques registrados no mundo.
+
 ## Recursos
 
 - **Estatísticas como página inicial**: download, upload, ping, estabilidade, médias por horário e um resumo da conexão
@@ -19,12 +21,27 @@ O SpeedMonitor roda testes de velocidade automaticamente (download, upload, ping
 - **Avisos em português** por Telegram, ntfy, Discord, Gotify, Pushover ou webhook: quando a internet volta depois de uma queda, quando a velocidade fica abaixo do plano e ao fim de cada teste
 - **Lista completa dos testes**, seletor de período e exportação em CSV e JSON
 - **Testes agendados** com servidores Ookla, LibreSpeed ou Cloudflare
-- **Painel personalizável**: arraste os cards para mudar a ordem, puxe o canto para mudar a largura e a altura, e oculte o que não quiser ver (botão de grade no cabeçalho ou Configurações → Personalizar painel)
+- **Serviços fora do ar**: a cada 2 minutos confere se WhatsApp, YouTube, Instagram, Netflix, gov.br e outros respondem. Diz se o problema é do serviço ou da sua internet, avisa quando um serviço está mais lento que o normal e mostra as últimas 24 horas de cada um. A lista é editável
+- **Mapa da conexão**: um globo com de onde respondem os serviços e os servidores de teste. A cidade vem do nome do servidor, da Cloudflare ou do endereço; quando não há pista, é estimada pelo tempo de resposta e aparece marcada como estimada
+- **Ataques no mundo**: um globo com de onde vêm os ataques registrados hoje por sensores espalhados pela internet (SANS DShield), por cidade e por país, e as portas mais atacadas. Não são ataques contra a sua conexão
+- **Painel personalizável**: arraste os cards para mudar a ordem, puxe o canto para mudar a largura e a altura, e oculte o que não quiser ver (botão de grade no cabeçalho ou Configurações → Personalizar painel). Celular, notebook e computador guardam cada um o seu layout, e no celular dá para arrastar com o dedo (toque e segure)
 - **Tema claro e escuro**, layout que aproveita telas grandes e se ajusta ao celular
-- **Várias instâncias** num painel só e **métricas para Prometheus e Grafana**
+- **Várias instâncias** num painel só, cada uma com o nome que você der nas Preferências, e **métricas para Prometheus e Grafana**
 - **Add-on para o Home Assistant** no repositório [guslma/homeassistant-addons](https://github.com/guslma/homeassistant-addons)
 
 ## Telas
+
+### Serviços
+
+Clique no card **Serviços** para ver cada serviço, o tempo de resposta e as últimas 24 horas. Os que caíram ou estão mais lentos que o normal aparecem no topo do card.
+
+![Serviços](docs/screenshots/servicos.png)
+
+### Ataques no mundo
+
+Clique no card **Ataques no mundo**, ou em **Mapa da conexão** → **Ataques no mundo**. O globo gira; arraste para virar e use a roda do mouse ou os botões para aproximar.
+
+![Ataques no mundo](docs/screenshots/ataques.png)
 
 ### Conexão: quedas e plano contratado
 
@@ -138,6 +155,17 @@ A página só abre na rede local. Para ver de outro lugar, o jeito mais simples 
 1. **Plano e conexão** (em Configurações): informe o download e o upload contratados e o endereço do roteador, por exemplo `192.168.1.1`. Para descobrir o endereço do roteador, rode `ip route | grep default` na máquina.
 2. **Integrações** (em Configurações): escolha onde receber os avisos e ligue "Avisar quando a internet cair". O jeito mais simples é o [ntfy](https://ntfy.sh): instale o app no celular, escolha um tópico e use `https://ntfy.sh` como servidor.
 3. **Definir frequência**: cada teste completo gasta algumas centenas de MB. Como as quedas são registradas à parte, dá para espaçar os testes (por exemplo, a cada 2 horas) e gastar menos internet sem perder nenhuma queda. Isso vale a pena principalmente em internet com franquia.
+
+## Serviços externos
+
+Além do servidor de testes escolhido, o SpeedMonitor consulta:
+
+- **SANS Internet Storm Center (DShield)**, para os ataques no mundo, uma vez por hora
+- **[ip-api.com](https://ip-api.com)**, para localizar os endereços dos serviços, dos servidores de teste e dos atacantes. Vão só esses endereços; as respostas ficam guardadas por uma semana
+- **[DB-IP](https://db-ip.com)**: a lista gratuita de país por endereço é baixada uma vez por mês e consultada no próprio servidor. IP Geolocation by DB-IP, licença [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Cloudflare** (`1.1.1.1/cdn-cgi/trace`), para saber de qual cidade a Cloudflare atende a sua conexão
+
+A verificação de serviços pode ser desligada na página **Serviços**.
 
 ## Licença
 

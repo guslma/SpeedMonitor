@@ -2,6 +2,7 @@ import express from 'express';
 import * as config from '../controller/config.js';
 import * as timer from '../tasks/timer.js';
 import * as connectivity from '../tasks/connectivity.js';
+import * as servicesTask from '../tasks/services.js';
 import password from '../middlewares/password.js';
 
 const app = express.Router();
@@ -35,6 +36,8 @@ app.patch("/:key", password(false), async (req, res) => {
     }
 
     if (req.params.key === "outageMonitor") await connectivity.start();
+
+    if (req.params.key === "serviceMonitor" || req.params.key === "services") servicesTask.start().then(undefined);
 
     res.json({message: `The key '${req.params.key}' has been successfully updated`});
 });

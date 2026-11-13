@@ -11,6 +11,7 @@ import db from '../config/database.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import * as interfaces from '../util/loadInterfaces.js';
+import { validateServices } from '../util/servicesList.js';
 
 const configDefaults = {
     ping: "25",
@@ -34,6 +35,9 @@ const configDefaults = {
     // Own layouts for phones and for laptops and tablets; "none" uses dashboardLayout (the computer one)
     dashboardLayoutPhone: "none",
     dashboardLayoutLaptop: "none",
+    // Whether WhatsApp, YouTube... are checked, and which ones ("default" is the built-in list)
+    serviceMonitor: "true",
+    services: "default",
     serverName: "none"
 }
 
@@ -158,6 +162,14 @@ export const validateInput = async (key, value) => {
     else if (["dashboardLayout", "dashboardLayoutPhone", "dashboardLayoutLaptop"].includes(key)) {
         value = validateLayout(value.toString());
         if (value === null) return "You need to provide a valid layout";
+    }
+
+    if (key === "serviceMonitor" && !["true", "false"].includes(value))
+        return "You need to provide either true or false";
+
+    if (key === "services") {
+        value = validateServices(value.toString());
+        if (value === null) return "You need to provide a valid list of services";
     }
 
     if (key === "provider" && !["ookla", "libre", "cloudflare"].includes(value))

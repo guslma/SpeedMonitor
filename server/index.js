@@ -18,6 +18,9 @@ import integrationsRoutes from './routes/integrations.js';
 import prometheusRoutes from './routes/prometheus.js';
 import opengraphRoutes from './routes/opengraph.js';
 import outagesRoutes from './routes/outages.js';
+import servicesRoutes from './routes/services.js';
+import mapRoutes from './routes/map.js';
+import * as servicesTask from './tasks/services.js';
 import * as connectivity from './tasks/connectivity.js';
 import * as outages from './controller/outages.js';
 import db from './config/database.js';
@@ -66,6 +69,8 @@ app.use("/api/integrations", integrationsRoutes);
 app.use("/api/prometheus", prometheusRoutes);
 app.use('/api/opengraph', opengraphRoutes);
 app.use("/api/outages", outagesRoutes);
+app.use("/api/services", servicesRoutes);
+app.use("/api/map", mapRoutes);
 app.use("/api*all", (req, res) => res.status(404).json({message: "Route not found"}));
 
 let buildPath = path.join(process.cwd(), 'build');
@@ -98,6 +103,9 @@ const run = async () => {
     setInterval(async () => outages.removeOld(parseInt(await config.getValue("retentionDays"))), 3600000);
 
     if (process.env.PREVIEW_MODE !== "true") await connectivity.start();
+
+    await servicesTask.start();
+    setInterval(() => servicesTask.removeOld(), 3600000);
 
     integrationTask.startTimer();
     if (process.env.RUN_TEST_ON_STARTUP === "true") {

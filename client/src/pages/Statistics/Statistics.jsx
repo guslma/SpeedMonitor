@@ -23,6 +23,9 @@ import AverageChart from "@/pages/Statistics/charts/AverageChart";
 import HourlyChart from "@/pages/Statistics/charts/HourlyChart.jsx";
 import ConsistencyChart from "@/pages/Statistics/charts/ConsistencyChart";
 import ConnectionChart from "@/pages/Statistics/charts/ConnectionChart";
+import ServicesCard from "@/pages/Statistics/charts/ServicesCard";
+import MapCard from "@/pages/Statistics/charts/MapCard";
+import AttacksCard from "@/pages/Statistics/charts/AttacksCard";
 import {ConnectionDetails} from "@/pages/Statistics/charts/ConnectionChart/ConnectionDetails";
 import PlanDialog from "@/common/components/PlanDialog";
 import DashboardCard from "@/pages/Statistics/components/DashboardCard";
@@ -277,7 +280,10 @@ export const Statistics = () => {
         ping: <PingChart labels={deferredStatistics.labels} data={deferredStatistics.data} failed={deferredStatistics.failed} errors={deferredStatistics.errors} onClick={() => setExpandedChart('ping')} compact/>,
         hourly: <HourlyChart hourlyAverages={deferredStatistics.hourlyAverages} onClick={() => setExpandedChart('hourly')}/>,
         avgDownload: <AverageChart title={t("statistics.values.down")} data={deferredStatistics.download} onClick={() => setExpandedChart('avgDownload')}/>,
-        avgUpload: <AverageChart title={t("statistics.values.up")} data={deferredStatistics.upload} onClick={() => setExpandedChart('avgUpload')}/>
+        avgUpload: <AverageChart title={t("statistics.values.up")} data={deferredStatistics.upload} onClick={() => setExpandedChart('avgUpload')}/>,
+        services: <ServicesCard/>,
+        map: <MapCard/>,
+        attacks: <AttacksCard/>
     };
 
     // While customizing, the buttons take the place of the header icons, so the cards stay where they really are

@@ -1,0 +1,188 @@
+@use "@/common/styles/colors" as *
+
+.services-page
+  width: min(60rem, calc(100% - 2rem))
+  margin: 1.5rem auto 3rem
+  color: $white
+
+.services-toolbar
+  display: flex
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 0.75rem
+  margin-bottom: 1rem
+
+  .dialog-btn
+    margin: 0
+    display: inline-flex
+    align-items: center
+    gap: 0.5rem
+
+.services-actions
+  display: flex
+  gap: 0.5rem
+
+.services-intro
+  margin-bottom: 1rem
+
+  h1
+    font-size: 1.6rem
+    margin: 0 0 0.25rem
+
+  p
+    margin: 0
+    color: $subtext
+    font-weight: 500
+
+.services-banner
+  display: flex
+  justify-content: space-between
+  align-items: center
+  gap: 1rem
+  padding: 0.9rem 1.1rem
+  margin-bottom: 1rem
+  border-radius: 0.9rem
+  border: 1px solid $light-gray
+  font-weight: 600
+
+  .dialog-btn
+    margin: 0
+
+.services-banner-up
+  border-color: $accent-primary
+  color: $accent-primary
+
+.services-banner-slow
+  border-color: $accent-warning
+  color: $accent-warning
+
+.services-banner-down
+  border-color: $accent-danger
+  color: $accent-danger
+
+.services-banner-offline, .services-banner-waiting
+  color: $subtext
+
+.services-list, .services-edit
+  border: 1px solid $light-gray
+  border-radius: 1rem
+  background: var(--glass-bg)
+  padding: 0.5rem 1rem
+
+.service-row
+  display: grid
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(8rem, 12rem)
+  align-items: center
+  gap: 0.9rem
+  padding: 0.75rem 0
+
+  & + .service-row
+    border-top: 1px solid $light-gray
+
+.service-dot
+  width: 0.8rem
+  height: 0.8rem
+  border-radius: 50%
+
+.service-dot-down
+  animation: service-pulse 1.4s ease-in-out infinite
+
+@keyframes service-pulse
+  50%
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.25)
+
+.service-text, .service-state
+  display: flex
+  flex-direction: column
+  min-width: 0
+
+  span, small
+    color: $subtext
+    font-weight: 500
+    font-size: 0.8rem
+
+.service-text span
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+
+.service-state
+  align-items: flex-end
+  text-align: right
+
+  span
+    font-size: 0.9rem
+    font-weight: 600
+    color: $white
+
+// The last 24 hours, one bar per hour, the oldest on the left
+.service-hours
+  display: grid
+  grid-template-columns: repeat(24, 1fr)
+  gap: 2px
+  height: 1.6rem
+
+  span
+    border-radius: 2px
+
+  .service-hour-empty
+    opacity: 0.4
+
+.services-note
+  margin: 0.5rem 0
+  color: $subtext
+  font-size: 0.8rem
+  font-weight: 500
+
+.services-edit-row
+  display: grid
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto
+  gap: 0.5rem
+  padding: 0.4rem 0
+
+  .dialog-input
+    margin: 0
+    text-align: left
+
+.services-remove
+  margin: 0
+
+.services-edit-actions
+  display: flex
+  gap: 0.5rem
+  padding: 0.75rem 0 0.5rem
+
+  > span
+    flex: 1
+
+  .dialog-btn
+    margin: 0
+
+.services-save
+  border-color: $accent-primary
+  color: $accent-primary
+
+.services-link
+  background: none
+  border: none
+  padding: 0.5rem 0
+  color: $subtext
+  font: inherit
+  font-size: 0.85rem
+  text-decoration: underline
+  cursor: pointer
+
+@media screen and (max-width: 700px)
+  .service-row
+    grid-template-columns: auto minmax(0, 1fr) auto
+    row-gap: 0.5rem
+
+  .service-hours
+    grid-column: 1 / -1
+
+  .services-edit-row
+    grid-template-columns: minmax(0, 1fr) auto
+
+    .dialog-input:nth-child(2)
+      grid-column: 1
+      grid-row: 2

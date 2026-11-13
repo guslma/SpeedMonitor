@@ -18,7 +18,10 @@ export const DEFAULT_LAYOUT = [
     {id: "download", size: 6, height: 4, visible: true},
     {id: "upload", size: 6, height: 4, visible: true},
     {id: "ping", size: 6, height: 4, visible: true},
-    {id: "hourly", size: 6, height: 4, visible: true}
+    {id: "hourly", size: 6, height: 4, visible: true},
+    {id: "services", size: 8, height: 4, visible: true},
+    {id: "map", size: 8, height: 4, visible: true},
+    {id: "attacks", size: 8, height: 4, visible: true}
 ];
 
 // Each kind of screen keeps its own layout. The computer one is also used by the others until they get their own.
